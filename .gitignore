@@ -1,0 +1,21 @@
+# C++ by-products
+*.o
+
+# Editor by-products
+*~
+*\#*\#
+*.swp
+
+# Haskell by-products
+cabal.config
+cabal.sandbox.config
+.cabal-sandbox
+dist
+
+# Outputs
+bin
+main
+
+# Media
+media
+
