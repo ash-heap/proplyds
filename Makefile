@@ -3,7 +3,7 @@ BINDIR=bin
 OBJDIR=$(SRCDIR)
 
 BINS=main
-OMAIN=main.o inputbuffer.o
+OMAIN=main.o sciurus/sciurus.o sciurus/window.o
 OUTPUTS=$(BINS:%=$(BINDIR)/%)
 OBJECTS=$(OMAIN:%=$(OBJDIR)/%)
 
@@ -14,17 +14,17 @@ BULLET_LIBS=-lBulletDynamics -lBulletCollision -lLinearMath
 GL_LIBS=-lGL -lGLU -lXxf86vm -lGLEW
 ASSIMP_LIBS=-lassimp
 LIBS=$(BULLET_LIBS) $(SDL_LIBS) $(GL_LIBS) $(ASSIMP_LIBS)
-INCLUDES=$(LOCAL_INCUDES) $(BULLET_INCLUDES)
+INCLUDES=$(LOCAL_INCLUDES) $(BULLET_INCLUDES)
 
 STANDARDS=-Wall -std=c++11
-#BUILDTYPE=-O3
-BUILDTYPE=-g
-BUILDPARAM=$(STANDARDS) $(BUILDTYPE)
+BUILDTYPE=-O3
+#BUILDTYPE=-g
+BUILDPARAM=$(STANDARDS) $(BUILDTYPE) $(INCLUDES)
 
-CFLAGS=$(BUILDPARAM) $(INCLUDES)
+CFLAGS=$(BUILDPARAM)
 LDFLAGS=$(BUILDPARAM) $(LIBS)
 
-all: $(OUTPUTS) | main bin
+all: $(OUTPUTS)
 
 bin:
 	mkdir bin
@@ -33,10 +33,10 @@ bin:
 	@echo -e '\e[33mSYMLINK \e[96m$@\e[m \e[33mTO \e[94m$^\e[m'
 	ln -s $^
 
-$(BINDIR)/main: $(OBJECTS)
+$(BINDIR)/main: $(OBJECTS) | bin
 	@echo -e '\e[33mLINKING \e[96m$@\e[m \e[33mFROM \e[94m$^\e[m'
 	$(CXX) $^ $(LDFLAGS) -o $@
-
+	
 $(OBJDIR)/%.o:$(SRCDIR)/%.cpp
 	@echo -e '\e[33mCOMPILING \e[96m$@\e[m \e[33mFROM \e[94m$^\e[m'
 	$(CXX) $(CFLAGS) -c $< -o $@
