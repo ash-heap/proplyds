@@ -65,8 +65,14 @@ Details
 Terrain/Water
 -------------
 
-Miles
-Explain terrain and terrain lodding here.
+The terrain will be generated using several layers of simplex noise. Some layers
+will be sampled with offsets determined by the outputs of other layers. In this
+way we will produce terrain with shaped features (ridges, canyons). A stretch
+goal will be to perform a second phase of generation wherein we simulate the
+effects of rain and water erosion on the terrain, as well as production of
+rivers and lakes. Oceans will appear at zero elevation, in primary goals.
+Terrain should be rendered with weighted textures according to gradient and
+biome, possibly derivative gradient.
 
 
 
@@ -92,8 +98,9 @@ based and should be affected by wind and or player movement.
 Buildings
 ---------
 
-Miles
-Explain buildings.
+Buildings will be loaded from a predetermined directory structure as textured
+meshes with materials, and then placed in appropriate settings on the terrain
+in their designated biome domains.
 
 
 
@@ -108,8 +115,10 @@ As a stretch goal we will add dynamic lighting such as flashlights and torches
 that the player can use to light up the environment around them.
 
 
-
-Miles, explain shadows.
+As a stretch goal, we will attempt realtime global dynamic illumination. If this
+stretch goal is unattainable without going to extreme lengths to optimize the
+code, we'll settle for the lesser stretch goal of global interpolated pre-cooked
+shadows.
 
 
 
@@ -121,8 +130,9 @@ All of weather is a stretch goal.  One part is to implement wind effects on the
 trees and foliage.  This means tree sway and/or rustling leaves using basic
 physics and/or shaders.
 
-
-Miles, wind on water and weather.
+The second weather goal would be to generate procedural clouds, rain, snow and
+lightning. A super-duper stretch goal would be to make the ground respond to
+precipitation.
 
 
 
@@ -130,7 +140,5 @@ Miles, wind on water and weather.
 Music
 -----
 
-Miles.
-
-
+SDL contains all of the functionality necessary to playback audio. Jordan Dick (a student not enrolled in Computer Graphics) has said he might provide an ambient soundtrack for the game, if his schedule permits it. Either way, the game will feature some kind of ambient sound, coded using SDL.
 
