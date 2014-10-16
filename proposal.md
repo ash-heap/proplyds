@@ -101,7 +101,13 @@ Explain buildings.
 Lighting
 --------
 
-Michael.
+We will be implementing a day light cycle with at least one sun and one moon.
+This will entail drawing the objects in the sky as well as changing lighting
+direction/position and intensity throughout the day and night.
+
+As a stretch goal we will add dynamic lighting such as flashlights and torches
+that the player can use to light up the environment around them.
+
 
 
 Miles, explain shadows.
