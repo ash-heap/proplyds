@@ -13,21 +13,32 @@ animated animals, wind (moving leaves and water), weather (random
 rain/clouds/thunderstorms), atmospheric music, and dynamic lighting
 (flashlight/torch).  Our extreme stretch goals are shadows and grass.
 
-These goals are
+These goals are highlighted
 
 
-Primary Goals.
+
+
+Goals
+=====
+
+
+Primary Goals
+-------------
+
 + Randomly generated planet (terrain). - Miles
 + Random foliage (hopefully based on L-systems). - Michael
-+ Lakes/rivers. - Miles
 + Day/Night. - Michael
++ Lakes/Oceans. - Miles
 + Lodding. - Both
 + Buildings. - Undecided.
 
 
 
 
-Stretch
+Stretch Goals
+-------------
+
++ Lakes/rivers. - Miles
 + Dynamic lighting. - Michael
 + Animated animals. - Miles
 + Wind - Michael (and Miles for water)
@@ -36,7 +47,72 @@ Stretch
 
 
 
-Extreme stretch.
+
+
+Extreme stretch
+---------------
+
 + Shadows. - Miles
 + Grass. - Michael
+
+
+
+
+
+Details
+=======
+
+
+
+Terrain/Water
+-------------
+
+Miles
+Explain terrain and terrain lodding here.
+
+
+
+Foliage
+-------
+
+Michael
+Explain foliage and foliage lodding here.
+
+
+
+Buildings
+---------
+
+Miles
+Explain buildings.
+
+
+
+Lighting
+--------
+
+Michael.
+
+
+Miles, explain shadows.
+
+
+
+
+Weather
+-------
+
+Michael, wind on plants.
+
+Miles, wind on water and weather.
+
+
+
+
+Music
+-----
+
+Miles.
+
+
 
