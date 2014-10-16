@@ -112,7 +112,5 @@ Miles, wind on water and weather.
 Music
 -----
 
-Miles.
-
-
+SDL contains all of the functionality necessary to playback audio. Jordan Dick (a student not enrolled in Computer Graphics) has said he might provide an ambient soundtrack for the game, if his schedule permits it. Either way, the game will feature some kind of ambient sound, coded using SDL.
 
