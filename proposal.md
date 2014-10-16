@@ -83,10 +83,8 @@ As a stretch goal of this section LOD will be applied.  If using _Weber & Penn_ 
 then this is covered in the paper above.  If instead we use L-Systems then
 billboarding will probably be the method used for LOD.
 
-Another stretch goal of this section is to implement wind.  This means tree sway
-and/or rustling leaves using basic physics and/or shaders.
-
-An extreme stretch goal corresponding to foliage is grass.
+An extreme stretch goal corresponding to foliage is grass.  This will be density
+based and should be affected by wind and or player movement.
 
 
 
@@ -118,7 +116,10 @@ Miles, explain shadows.
 Weather
 -------
 
-Michael, wind on plants.
+All of weather is a stretch goal.  One part is to implement wind effects on the
+trees and foliage.  This means tree sway and/or rustling leaves using basic
+physics and/or shaders.
+
 
 Miles, wind on water and weather.
 
