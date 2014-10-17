@@ -34,33 +34,6 @@ static unsigned int ms = 0;
 static unsigned int dt = 0;
 static bool resume = true;
 static sc::Keyboard kb;
-/*
-static const int nkeys = 282; //there are 282 scancodes
-static char kbstate[nkeys]; //one keystate for each key
-static const char KDOWN = 0x01; //button is currently down
-static const char KPRESSED = 0x02; //button was pressed since last clearing
-static const char KRELEASED = 0x04; //button was released since last clearing
-static const char KPRESSEDNOW = KDOWN | KPRESSED; //do not use for reading
-static const char KNOTDOWN = ~KDOWN; //do not use for reading
-static inline char presskey(char key){return key | KPRESSEDNOW;}
-static inline char releasekey(char key){return (key & KNOTDOWN) | KRELEASED;}
-static inline char clearkey(char key){return key & KDOWN;}
-static inline void initkb(){for(int i = 0; i < nkeys; i++) kbstate[i] = 0x00;}
-static inline void clearkb()
-    {for(int i = 0; i < nkeys; i++) kbstate[i] = clearkey(kbstate[i]);}
-static inline void keydown(SDL_Scancode s) //key press callback
-    {kbstate[s] = presskey(kbstate[s]);}
-static inline void keyup(SDL_Scancode s) //key release callback
-    {kbstate[s] = releasekey(kbstate[s]);}
-static inline char getkey(SDL_Keycode key) //get raw key state
-    {return kbstate[SDL_GetScancodeFromKey(key)];}
-static inline bool iskeydown(SDL_Keycode key) //get key KDOWN state
-    {return getkey(key) & KDOWN;}
-static inline bool waskeypressed(SDL_Keycode key) //get key KPRESSED state
-    {return getkey(key) & KPRESSED;}
-static inline bool waskeyreleased(SDL_Keycode key) //get key KRELEASED state
-    {return getkey(key) & KRELEASED;}
-*/
 //builds new normals for mesh, clobbering the old ones if they exist
 static inline void mknorms(aiMesh* mesh)
 {
