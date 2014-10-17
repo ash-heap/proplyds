@@ -2,10 +2,17 @@ SRCDIR=src
 BINDIR=bin
 OBJDIR=$(SRCDIR)
 
+#TO ADD A NEW OUTPUT BINARY...
+#  add its name to BINS
+#  add a variable listing its objects (see OMAIN, MAIN_OBJECTS)
+#  copy the $(BINDIR)/main target, replacing main with your output, and its
+#    prereqs with your variable listing objects.
 BINS=main
+
 OMAIN=main.o sciurus/sciurus.o sciurus/window.o sciurus/keyboard.o
+MAIN_OBJECTS=$(OMAIN:%=$(OBJDIR)/%)
+
 OUTPUTS=$(BINS:%=$(BINDIR)/%)
-OBJECTS=$(OMAIN:%=$(OBJDIR)/%)
 
 LOCAL_INCLUDES=-I$(SRCDIR)
 SDL_LIBS=-lSDL2
@@ -19,10 +26,12 @@ INCLUDES=$(LOCAL_INCLUDES) $(BULLET_INCLUDES)
 STANDARDS=-Wall -std=c++11
 BUILDTYPE=-O3
 #BUILDTYPE=-g
-BUILDPARAM=$(STANDARDS) $(BUILDTYPE) $(INCLUDES)
+BUILDPARAM=$(STANDARDS) $(BUILDTYPE)
 
-CFLAGS=$(BUILDPARAM)
+CFLAGS=$(BUILDPARAM) $(INCLUDES)
 LDFLAGS=$(BUILDPARAM) $(LIBS)
+# BFLAGS is used when doing compilation and linking in a single step
+BFLAGS=$(BUILDPARAM) $(INCLUDES) $(LIBS)
 
 all: $(OUTPUTS) main
 
@@ -33,7 +42,7 @@ bin:
 	@echo -e '\e[33mSYMLINK \e[96m$@\e[m \e[33mTO \e[94m$^\e[m'
 	ln -s $^
 
-$(BINDIR)/main: $(OBJECTS) | bin
+$(BINDIR)/main: $(MAIN_OBJECTS) | bin
 	@echo -e '\e[33mLINKING \e[96m$@\e[m \e[33mFROM \e[94m$^\e[m'
 	$(CXX) $^ $(LDFLAGS) -o $@
 	
@@ -43,5 +52,8 @@ $(OBJDIR)/%.o:$(SRCDIR)/%.cpp
 
 clean:
 	@echo -e '\e[33mCLEANING...\e[m'
-	rm -f -v *.o *~ $(OUTPUTS) $(OBJECTS) main
+	rm -f -v *~ $(MAIN_OBJECTS)
+
+clobber:
+	rm -f -v *~ $(OUTPUTS) main
 

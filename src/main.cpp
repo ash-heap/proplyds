@@ -130,8 +130,8 @@ int main(int argc, char** argv)
         fprintf(stderr, sc::getError().c_str());
         return -1;
     }
-    
     initGL();
+    
     //do one frame of execution before showing, to prevent blank screen
     update();
     draw();

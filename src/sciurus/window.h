@@ -49,9 +49,8 @@ public:
     
     inline SDL_Window* getHandle(){return handle;}
     inline bool valid(){return handle ? true : false;}
-    inline void swapBuffers(){SDL_GL_SwapWindow(handle);}
     inline SDL_GLContext getContext(){return context;}
-    bool fullscreen(bool fullscreen, bool desktop = false);
+    inline void swapBuffers(){SDL_GL_SwapWindow(handle);}
     inline void setTitle(std::string title)
         {SDL_SetWindowTitle(handle, title.c_str());}
     inline std::string getTitle(){return SDL_GetWindowTitle(handle);}
@@ -61,14 +60,11 @@ public:
         {SDL_SetWindowSize(handle, dim.x, dim.y);}
     inline void hide(){SDL_HideWindow(handle);}
     inline void show(){SDL_ShowWindow(handle);}
+    bool fullscreen(bool fullscreen, bool desktop = false);
     
-    static bool relativeMouse(bool grab)
-        {return SDL_SetRelativeMouseMode(grab ? SDL_TRUE : SDL_FALSE) < 0
-                                                            ? false : true;}
-    static bool hideCursor(bool hide)
-        {return SDL_ShowCursor(hide ? SDL_DISABLE : SDL_ENABLE) < 0
-                                                            ? false : true;}
-    static bool isCursorHidden()
+    static bool relativeMouse(bool relative = true);
+    static bool hideCursor(bool hide);
+    static inline bool isCursorHidden()
         {return SDL_ShowCursor(SDL_QUERY) == SDL_ENABLE ? true : false;}
 };
 

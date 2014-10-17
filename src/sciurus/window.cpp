@@ -15,18 +15,16 @@ Window::Window(std::string title, u32 width, u32 height,
                                 width, height, (SDL_WindowFlags)flags);
     if(!handle)
     {
-        sc_error += "Sciurus failed to create a window: ";
-        sc_error += SDL_GetError();
-        sc_error += "\n";
+        sc_error += "#ERROR# Sciurus failed to create a window: "
+                 + std::string(SDL_GetError()) + "\n";
     }
     context = SDL_GL_CreateContext(handle);
     SDL_GL_MakeCurrent(handle, context);
     GLenum err = glewInit();
     if(err != GLEW_OK)
     {
-        sc_error += "Sciurus failed to initialize GLEW: ";
-        sc_error += (char*)glewGetErrorString(err);
-        sc_error += "\n";
+        sc_error += "#ERROR# Sciurus failed to initialize GLEW: "
+                 + std::string((char*)glewGetErrorString(err)) + "\n";
     }
     glewinit = true;
 }
@@ -48,7 +46,32 @@ bool Window::fullscreen(bool fullscreen, bool desktop)
     );
     if(result)
     {
-        sc_error = SDL_GetError();
+        sc_error += "#ERROR# Sciurus failed to set fullscreen"
+                 + std::string(SDL_GetError()) + "\n";
+        return false;
+    }
+    return true;
+}
+
+bool Window::relativeMouse(bool relative)
+{
+    int result = SDL_SetRelativeMouseMode(relative ? SDL_TRUE : SDL_FALSE);
+    if(result < 0)
+    {
+        sc_error += "#ERROR# Sciurus failed to set relative mouse: "
+                 + std::string(SDL_GetError()) + "\n";
+        return false;
+    }
+    return true;
+}
+
+bool Window::hideCursor(bool hide = true)
+{
+    int result = SDL_ShowCursor(hide ? SDL_DISABLE : SDL_ENABLE);
+    if(result < 0)
+    {
+        sc_error += "#ERROR# Sciurus failed to set cursor visibility: "
+                 + std::string(SDL_GetError()) + "\n";
         return false;
     }
     return true;
