@@ -23,6 +23,11 @@ bool init()
     return true;
 }
 
+void quit()
+{
+    SDL_Quit();
+}
+
 std::string getError()
 {
     return sc_error;

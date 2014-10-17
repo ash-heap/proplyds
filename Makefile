@@ -3,7 +3,7 @@ BINDIR=bin
 OBJDIR=$(SRCDIR)
 
 BINS=main
-OMAIN=main.o sciurus/sciurus.o sciurus/window.o
+OMAIN=main.o sciurus/sciurus.o sciurus/window.o sciurus/keyboard.o
 OUTPUTS=$(BINS:%=$(BINDIR)/%)
 OBJECTS=$(OMAIN:%=$(OBJDIR)/%)
 
@@ -24,7 +24,7 @@ BUILDPARAM=$(STANDARDS) $(BUILDTYPE) $(INCLUDES)
 CFLAGS=$(BUILDPARAM)
 LDFLAGS=$(BUILDPARAM) $(LIBS)
 
-all: $(OUTPUTS)
+all: $(OUTPUTS) main
 
 bin:
 	mkdir bin
