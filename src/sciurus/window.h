@@ -13,7 +13,7 @@
 #define SC_WINDOW_DEFAULT_HEIGHT 600
 #endif
 #ifndef SC_WINDOW_DEFAULT_FLAGS
-#define SC_WINDOW_DEFAULT_FLAGS (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_INPUT_FOCUS | SDL_WINDOW_MOUSE_FOCUS)
+#define SC_WINDOW_DEFAULT_FLAGS SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_INPUT_FOCUS | SDL_WINDOW_MOUSE_FOCUS
 #endif
 /*
 NOTE: Before creating your window, specify context attributes as follows...
@@ -42,7 +42,7 @@ public:
     Window(std::string title = "Sciurus Window",
             u32 width = SC_WINDOW_DEFAULT_WIDTH,
             u32 height = SC_WINDOW_DEFAULT_HEIGHT,
-            SDL_WindowFlags flags = SC_WINDOW_DEFAULT_FLAGS,
+            int flags = SC_WINDOW_DEFAULT_FLAGS,
             u32 xinitpos = SDL_WINDOWPOS_UNDEFINED,
             u32 yinitpos = SDL_WINDOWPOS_UNDEFINED);
     ~Window();

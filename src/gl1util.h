@@ -10,10 +10,16 @@ inline aiMesh* loadmesh(const char* filename, bool smooth = false)
 {
     Assimp::Importer importer = Assimp::Importer();
     const aiScene* scene = importer.ReadFile(filename,
-          aiProcess_JoinIdenticalVertices
+          aiProcess_CalcTangentSpace
+        | aiProcess_JoinIdenticalVertices
         | aiProcess_Triangulate
         | aiProcess_RemoveRedundantMaterials
         | aiProcess_ImproveCacheLocality
+        | aiProcess_FixInfacingNormals
+        | aiProcess_OptimizeMeshes
+        | aiProcess_OptimizeGraph
+        | aiProcess_FindDegenerates
+        | aiProcess_FindInvalidData
         | smooth ? aiProcess_GenSmoothNormals : aiProcess_GenNormals
     );
     aiMesh* dst = new aiMesh();

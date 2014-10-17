@@ -9,10 +9,10 @@ extern std::string sc_error;
 static bool glewinit = false;
 
 Window::Window(std::string title, u32 width, u32 height,
-                SDL_WindowFlags flags, u32 xinitpos, u32 yinitpos)
+                int flags, u32 xinitpos, u32 yinitpos)
 {
     handle = SDL_CreateWindow(title.c_str(), xinitpos, yinitpos,
-                                width, height, flags);
+                                width, height, (SDL_WindowFlags)flags);
     if(!handle)
     {
         sc_error += "Sciurus failed to create a window: ";

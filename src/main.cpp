@@ -1,20 +1,14 @@
+#include <sciurus/sciurus.h>
 #include <cstdlib>
 #include <cstdio>
-#include <string>
-#include <sciurus/sciurus.h>
-#include <SDL2/SDL.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/noise.hpp>
 #include <glm/gtx/random.hpp>
 #include <bullet/btBulletDynamicsCommon.h>
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
 
 #include <gl1util.h>
-using namespace std;
 
 //appname
 static const char* appname = "Miles Rufat-Latre: Space Simulator 2014 Premium";
@@ -125,21 +119,12 @@ static inline void initGL()
     glColor4f(1.f, 1.f, 1.f, 1.f);
 }
 
-static inline void initscene()
-{
-
-}
-
-static inline void cleanscene()
-{
-
-}
-
 int main(int argc, char** argv)
 {
     sc::init();
     
-    window = new sc::Window(wtitle, scrw, scrh);
+    window = new sc::Window(wtitle, scrw, scrh,
+        SC_WINDOW_DEFAULT_FLAGS | SDL_WINDOW_HIDDEN);
     if(!window->valid())
     {
         fprintf(stderr, sc::getError().c_str());
@@ -147,18 +132,14 @@ int main(int argc, char** argv)
     }
     
     initGL();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    window->swapBuffers();
-    //SDL_GL_SwapWindow(window);
-    //SDL_ShowWindow(window);
+    //do one frame of execution before showing, to prevent blank screen
+    update();
+    draw();
+    window->show();
     
-    kb.wipe();
-    
-    initscene();
     mainloop();
-    cleanscene();
-    delete window;
     
+    delete window;
     sc::quit();
 
     return 0;
