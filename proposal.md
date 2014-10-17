@@ -1,6 +1,6 @@
 % CSCI 4229 - Final Project
 % Miles Rufat-Latre & Michael R. Shannon
-% Wednesday, October 15, 2014
+% Wednesday, October 16, 2014
 
 
 We intend to create a procedural planet consisting of level of detailed terrain
