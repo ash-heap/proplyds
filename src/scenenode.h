@@ -8,6 +8,7 @@ class SceneNode
 {
 public:
     typedef void(*DrawFunction)(void*);
+    static void nulldrawfunc(void*){}
     
     SceneNode* parent;
     std::vector<SceneNode*> children;

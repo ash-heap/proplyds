@@ -33,8 +33,10 @@ static bool resume = true;
 static Keyboard kb;
 //scene objects :D
 void scenedrawmesh(void* data){drawmesh((aiMesh*)data);}
+void voiddrawfunc(void*){}
 SceneNode* root = new SceneNode();
 SceneNode* left = new SceneNode(root);
+SceneNode* camera = new SceneNode(root);
 
 static inline void perspective()
 {
@@ -93,6 +95,26 @@ static inline void handleevents()
     }
 }
 
+static inline void initGL()
+{
+    glClearColor(0.f, 0.f, 0.f, 1.f);
+    glColor4f(0.5f, 0.5f, 0.5f, 1.f);
+    perspective();
+}
+
+static inline void initscene()
+{
+    root->data = (void*)loadmesh("media/testmesh.ply");
+    root->f = scenedrawmesh;
+    left->data = root->data;
+    left->f = scenedrawmesh;
+    left->t = glm::translate(mat4(1.f), vec3(0.f, 3.f, 0.f));
+    left->t = glm::rotate(left->t, 2.f, vec3(0.f, 1.f, 0.f));
+    camera->data = NULL;
+    camera->f = SceneNode::nulldrawfunc;
+    camera->t = glm::translate(mat4(1.f), vec3(0.f, 0.f, -5.f));
+}
+
 static unsigned int oldms = ms;
 static inline void update()
 {
@@ -107,14 +129,13 @@ static inline void update()
     
     root->t = glm::rotate(root->t, (float)dt / 1000.f, vec3(0.f, 1.f, 0.f));
     left->t = glm::rotate(left->t, (float)dt / 500.f, vec3(0.f, 0.f, 1.f));
-    //root->t = glm::rotate(mat4(1.f), 2.f, vec3(0.f, 1.f, 0.f));
 }
 
 static inline void draw()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    glTranslatef(0.f, 0.f, -5.f);
+    glMultMatrixf(glm::value_ptr(camera->getInvGlobTF()));
     root->drawAll();
     window->swapBuffers();
 }
@@ -126,24 +147,6 @@ static inline void mainloop()
         update();
         draw();
     }
-}
-
-static inline void initGL()
-{
-    glClearColor(0.f, 0.f, 0.f, 1.f);
-    glColor4f(0.5f, 0.5f, 0.5f, 1.f);
-    perspective();
-}
-
-static inline void initscene()
-{
-    root->data = (void*)loadmesh("media/testmesh.ply");
-    root->f = scenedrawmesh;
-    root->t = glm::translate(mat4(1.f), vec3(0.f, 0.f, -5.f));
-    left->data = root->data;
-    left->f = scenedrawmesh;
-    left->t = glm::translate(mat4(1.f), vec3(0.f, 3.f, 0.f));
-    left->t = glm::rotate(left->t, 2.f, vec3(0.f, 1.f, 0.f));
 }
 
 static inline void cleanscene()

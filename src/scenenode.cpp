@@ -9,6 +9,7 @@ using namespace std;
 SceneNode::SceneNode()
 {
     t = mat4(1.f);
+    f = nulldrawfunc;
     parent = NULL;
     children = vector<SceneNode*>();
 }
@@ -16,6 +17,7 @@ SceneNode::SceneNode()
 SceneNode::SceneNode(SceneNode* parent)
 {
     t = mat4(1.f);
+    f = nulldrawfunc;
     this->parent = parent;
     parent->children.push_back(this);
     children = vector<SceneNode*>();
