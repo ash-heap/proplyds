@@ -1,9 +1,8 @@
 #ifndef SCIURUS_WINDOW_H
 #define SCIURUS_WINDOW_H
 
-#include <glm/glm.hpp>
-#include <SDL2/SDL.h>
 #include <sciurus/types.h>
+#include <SDL2/SDL.h>
 #include <string>
 
 #ifndef SC_WINDOW_DEFAULT_WIDTH
@@ -42,7 +41,7 @@ public:
     Window(std::string title = "Sciurus Window",
             u32 width = SC_WINDOW_DEFAULT_WIDTH,
             u32 height = SC_WINDOW_DEFAULT_HEIGHT,
-            int flags = SC_WINDOW_DEFAULT_FLAGS,
+            i32 flags = SC_WINDOW_DEFAULT_FLAGS,
             u32 xinitpos = SDL_WINDOWPOS_UNDEFINED,
             u32 yinitpos = SDL_WINDOWPOS_UNDEFINED);
     ~Window();

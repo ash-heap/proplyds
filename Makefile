@@ -7,9 +7,11 @@ OBJDIR=$(SRCDIR)
 #  add a variable listing its objects (see OMAIN, MAIN_OBJECTS)
 #  copy the $(BINDIR)/main target, replacing main with your output, and its
 #    prereqs with your variable listing objects.
+#NOTE: -std=c++11 is no longer a prerequisite, but we can reintroduce it
+#    as soon as it is needed.
 BINS=main
 
-OMAIN=main.o sciurus/sciurus.o sciurus/window.o sciurus/keyboard.o
+OMAIN=main.o scenenode.o sciurus/sciurus.o sciurus/window.o sciurus/keyboard.o
 MAIN_OBJECTS=$(OMAIN:%=$(OBJDIR)/%)
 
 OUTPUTS=$(BINS:%=$(BINDIR)/%)
@@ -23,7 +25,7 @@ ASSIMP_LIBS=-lassimp
 LIBS=$(BULLET_LIBS) $(SDL_LIBS) $(GL_LIBS) $(ASSIMP_LIBS)
 INCLUDES=$(LOCAL_INCLUDES) $(BULLET_INCLUDES)
 
-STANDARDS=-Wall -std=c++11
+STANDARDS=-Wall
 BUILDTYPE=-O3
 #BUILDTYPE=-g
 BUILDPARAM=$(STANDARDS) $(BUILDTYPE)

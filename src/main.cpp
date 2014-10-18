@@ -1,4 +1,6 @@
 #include <sciurus/sciurus.h>
+#include <sciurus/window.h>
+#include <sciurus/keyboard.h>
 #include <cstdlib>
 #include <cstdio>
 #include <glm/glm.hpp>
@@ -9,6 +11,7 @@
 #include <bullet/btBulletDynamicsCommon.h>
 
 #include <gl1util.h>
+#include <scenenode.h>
 
 //appname
 static const char* appname = "Miles Rufat-Latre: Space Simulator 2014 Premium";
