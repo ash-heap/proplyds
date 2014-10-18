@@ -25,9 +25,7 @@ SceneNode::~SceneNode()
 {
     u32 size = children.size();
     for(u32 i = 0; i < size; i++)
-    {
         delete children[i];
-    }
 }
 
 void SceneNode::drawAll()

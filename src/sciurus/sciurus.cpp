@@ -7,7 +7,7 @@ namespace sc
 static bool inited = false;
 std::string sc_error;
 
-bool init()
+bool sc_init()
 {
     if(inited) return true;
     if(SDL_Init(SDL_INIT_EVERYTHING))
@@ -23,12 +23,12 @@ bool init()
     return true;
 }
 
-void quit()
+void sc_quit()
 {
     SDL_Quit();
 }
 
-std::string getError()
+std::string sc_getError()
 {
     return sc_error;
 }

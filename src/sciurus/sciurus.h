@@ -7,9 +7,9 @@
 namespace sc
 {
 
-bool init();
-void quit();
-std::string getError();
+bool sc_init();
+void sc_quit();
+std::string sc_getError();
 
 }
 
