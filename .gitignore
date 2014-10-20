@@ -1,5 +1,6 @@
-# C++ by-products
+# C++, Tarball outputs
 *.o
+*.tar
 
 # Editor by-products
 *~
@@ -11,15 +12,14 @@ cabal.sandbox.config
 .cabal-sandbox
 dist
 
-# MSVC by-products
+# MSVC by-products (and inputs)
 3p
 obj
 ipch
-*.obj
-*.exe
-*.dll
+bin32
+bin64
 
-# Outputs
+# Unix by-products
 *.pdf
 bin
 main

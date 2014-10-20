@@ -22,6 +22,7 @@ inline aiMesh* loadmesh(const char* filename, bool smooth = false)
         | aiProcess_FindInvalidData
         | smooth ? aiProcess_GenSmoothNormals : aiProcess_GenNormals
     );
+	if(!scene) return NULL;
     aiMesh* dst = new aiMesh();
     aiMesh* src = scene->mMeshes[0];
     dst->mNumVertices = src->mNumVertices;

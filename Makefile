@@ -38,6 +38,7 @@ BFLAGS=$(BUILDPARAM) $(INCLUDES) $(LIBS)
 all: $(OUTPUTS) main
 
 bin:
+	@echo -e '\e[33mCREATING DIRECTORY \e[96m$@\e[m'
 	mkdir bin
 
 %: $(BINDIR)/%
@@ -52,10 +53,20 @@ $(OBJDIR)/%.o:$(SRCDIR)/%.cpp
 	@echo -e '\e[33mCOMPILING \e[96m$@\e[m \e[33mFROM \e[94m$^\e[m'
 	$(CXX) $(CFLAGS) -c $< -o $@
 
+packs: media.tar win3pdeps.tar
+
+media.tar: media
+	@echo -e '\e[33mCOMPRESSING \e[96m$@\e[m \e[33mFROM \e[94m$^\e[m'
+	tar cf $@ $^
+
+win3pdeps.tar: bin32 bin64 3p
+	@echo -e '\e[33mCOMPRESSING \e[96m$@\e[m \e[33mFROM \e[94m$^\e[m'
+	tar cf $@ $^
+
 clean:
 	@echo -e '\e[33mCLEANING...\e[m'
 	rm -f -v *~ $(MAIN_OBJECTS)
 
-clobber:
-	rm -f -v *~ $(OUTPUTS) main
+clobber: clean
+	rm -f -v *~ $(OUTPUTS) main media.tar win3pdeps.tar
 

@@ -31,6 +31,7 @@ static unsigned int dt = 0;
 static bool resume = true;
 static Keyboard kb;
 //scene objects :D
+const char* testmeshfile = "media/testmesh.ply";
 void scenedrawmesh(void* data){drawmesh((aiMesh*)data);}
 void voiddrawfunc(void*){}
 SceneNode* root = new SceneNode();
@@ -103,7 +104,12 @@ static inline void initGL()
 
 static inline void initscene()
 {
-    root->data = (void*)loadmesh("media/testmesh.ply");
+    root->data = (void*)loadmesh(testmeshfile);
+    if(!root->data)
+    {
+        fprintf(stderr, "Failed to load mesh: %s\n", testmeshfile);
+        exit(EXIT_FAILURE);
+    }
     root->f = scenedrawmesh;
     left->data = root->data;
     left->f = scenedrawmesh;
@@ -163,7 +169,7 @@ int main(int argc, char** argv)
     if(!window->valid())
     {
         fprintf(stderr, sc_getError().c_str());
-        return -1;
+        exit(EXIT_FAILURE);
     }
     initGL();
     
@@ -181,6 +187,6 @@ int main(int argc, char** argv)
     delete window;
     sc_quit();
 
-    return 0;
+    exit(EXIT_SUCCESS);
 }
 
