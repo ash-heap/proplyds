@@ -18,6 +18,7 @@ obj
 ipch
 bin32
 bin64
+*.sdf
 
 # Unix by-products
 *.pdf
