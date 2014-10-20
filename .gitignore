@@ -3,7 +3,6 @@
 
 # Editor by-products
 *~
-*\#*\#
 *.swp
 
 # Haskell by-products
@@ -11,6 +10,14 @@ cabal.config
 cabal.sandbox.config
 .cabal-sandbox
 dist
+
+# MSVC by-products
+3p
+obj
+ipch
+*.obj
+*.exe
+*.dll
 
 # Outputs
 *.pdf

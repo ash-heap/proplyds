@@ -9,7 +9,6 @@ using namespace sc;
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/noise.hpp>
 #include <glm/gtx/random.hpp>
-#include <bullet/btBulletDynamicsCommon.h>
 
 #include <gl1util.h>
 #include <scenenode.h>
