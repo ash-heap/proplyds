@@ -20,6 +20,13 @@ bin32
 bin64
 *.sdf
 *.opensdf
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.cachefile
+*.aps
+*.ncb
 
 # Unix by-products
 *.pdf
