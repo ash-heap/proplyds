@@ -19,6 +19,7 @@ ipch
 bin32
 bin64
 *.sdf
+*.opensdf
 
 # Unix by-products
 *.pdf
