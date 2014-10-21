@@ -25,7 +25,7 @@ SceneNode::SceneNode(SceneNode* parent)
 
 SceneNode::~SceneNode()
 {
-    u32 size = children.size();
+    u32 size = (u32)children.size();
     for(u32 i = 0; i < size; i++)
         delete children[i];
 }
@@ -35,7 +35,7 @@ void SceneNode::drawAll()
     glPushMatrix();
     glMultMatrixf(glm::value_ptr(t));
     f(data);
-    u32 size = children.size();
+    u32 size = (u32)children.size();
     for(u32 i = 0; i < size; i++) children[i]->drawAll();
     glPopMatrix();
 }

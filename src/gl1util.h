@@ -20,7 +20,7 @@ inline aiMesh* loadmesh(const char* filename, bool smooth = false)
         | aiProcess_OptimizeGraph
         | aiProcess_FindDegenerates
         | aiProcess_FindInvalidData
-        | smooth ? aiProcess_GenSmoothNormals : aiProcess_GenNormals
+        | (smooth ? aiProcess_GenSmoothNormals : aiProcess_GenNormals)
     );
 	if(!scene) return NULL;
     aiMesh* dst = new aiMesh();
@@ -82,9 +82,9 @@ inline void drawgrid(float xmin, float xmax,
                             float zmin, float zmax,
                             float gridsize)
 {
-    unsigned int nx = (xmax - xmin) / gridsize;
-    unsigned int ny = (ymax - ymin) / gridsize;
-    unsigned int nz = (zmax - zmin) / gridsize;
+    unsigned int nx = (unsigned int)((xmax - xmin) / gridsize);
+    unsigned int ny = (unsigned int)((ymax - ymin) / gridsize);
+    unsigned int nz = (unsigned int)((zmax - zmin) / gridsize);
     float xpos = xmin;
     float ypos = ymin;
     float zpos = zmin;

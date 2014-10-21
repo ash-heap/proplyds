@@ -42,17 +42,17 @@ public:
     inline u8 getKey(SDL_Keycode key) //get raw key state
         {return getKey(SDL_GetScancodeFromKey(key));}
     inline bool isKeyDown(SDL_Scancode s)
-        {return getKey(s) & KDOWN;}
+        {return (getKey(s) & KDOWN) == 0 ? false : true;}
     inline bool isKeyDown(SDL_Keycode k) //get key KDOWN state
-        {return getKey(k) & KDOWN;}
+        {return (getKey(k) & KDOWN) == 0 ? false : true;}
     inline bool wasKeyPressed(SDL_Scancode s)
-        {return getKey(s) & KPRESSED;}
+        {return (getKey(s) & KPRESSED) == 0 ? false : true;}
     inline bool wasKeyPressed(SDL_Keycode k) //get key KPRESSED state
-        {return getKey(k) & KPRESSED;}
+        {return (getKey(k) & KPRESSED) == 0 ? false : true;}
     inline bool wasKeyReleased(SDL_Scancode s)
-        {return getKey(s) & KRELEASED;}
+        {return (getKey(s) & KRELEASED) == 0 ? false : true;}
     inline bool wasKeyReleased(SDL_Keycode k) //get key KRELEASED state
-        {return getKey(k) & KRELEASED;}
+        {return (getKey(k) & KRELEASED) == 0 ? false : true;}
 };
 
 }
