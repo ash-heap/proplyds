@@ -177,7 +177,7 @@ static inline void mainloop()
 
 static inline void cleanscene()
 {
-    //delete (aiMesh*)root->data; //deallocated by assimp Importer
+    delete (aiMesh*)root->data;
     delete root;
 }
 

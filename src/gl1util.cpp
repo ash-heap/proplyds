@@ -20,14 +20,19 @@ aiMesh* loadmesh(const char* filename, bool smooth)
         | (smooth ? aiProcess_GenSmoothNormals : aiProcess_GenNormals)
     );
 	if(!scene) return NULL;
-	return scene->mMeshes[0];
-    /*
+	//return scene->mMeshes[0];
     aiMesh* dst = new aiMesh();
     aiMesh* src = scene->mMeshes[0];
     dst->mNumVertices = src->mNumVertices;
     dst->mVertices = new aiVector3D[dst->mNumVertices];
+    for(unsigned int i = 0; i < src->GetNumUVChannels(); i++)
+        dst->mTextureCoords[i] = new aiVector3D[dst->mNumVertices];
     for(unsigned int i = 0; i < dst->mNumVertices; i++)
+    {
         dst->mVertices[i] = src->mVertices[i];
+        for(unsigned int j = 0; j < src->GetNumUVChannels(); j++)
+            dst->mTextureCoords[j][i] = src->mTextureCoords[j][i];
+    }
     dst->mNormals = new aiVector3D[dst->mNumVertices];
     dst->mNumFaces = src->mNumFaces;
     dst->mFaces = new aiFace[dst->mNumFaces];
@@ -41,7 +46,6 @@ aiMesh* loadmesh(const char* filename, bool smooth)
             df->mIndices[j] = sf->mIndices[j];
     }
     return dst;
-    */
 }
 
 void drawmesh(aiMesh* mesh)
