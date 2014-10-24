@@ -18,5 +18,6 @@ Windows
 - acquire and untar the media and win3pdeps packages into the source directory
 - run Visual Studio and load the .sln file
 - build and run
+
 NOTE: 64-bit systems may fail to run the 32-bit version because of missing 32-bit .dlls (in this case, the operating system will attempt to load the 64-bit .dlls, and the game will crash at startup).
 
