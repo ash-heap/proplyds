@@ -11,7 +11,7 @@ OBJDIR=$(SRCDIR)
 #    as soon as it is needed.
 BINS=main
 
-OMAIN=main.o scenenode.o sciurus/sciurus.o sciurus/window.o sciurus/keyboard.o
+OMAIN=main.o gl1util.o scenenode.o sciurus/sciurus.o sciurus/window.o sciurus/keyboard.o
 MAIN_OBJECTS=$(OMAIN:%=$(OBJDIR)/%)
 
 OUTPUTS=$(BINS:%=$(BINDIR)/%)
@@ -22,7 +22,8 @@ BULLET_INCLUDES=-I/usr/include/bullet
 BULLET_LIBS=-lBulletDynamics -lBulletCollision -lLinearMath
 GL_LIBS=-lGL -lGLU -lXxf86vm -lGLEW
 ASSIMP_LIBS=-lassimp
-LIBS=$(BULLET_LIBS) $(SDL_LIBS) $(GL_LIBS) $(ASSIMP_LIBS)
+SOIL_LIBS=-lSOIL
+LIBS=$(BULLET_LIBS) $(SDL_LIBS) $(GL_LIBS) $(ASSIMP_LIBS) $(SOIL_LIBS)
 INCLUDES=$(LOCAL_INCLUDES) $(BULLET_INCLUDES)
 
 STANDARDS=-Wall

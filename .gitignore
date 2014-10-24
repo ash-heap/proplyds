@@ -27,6 +27,7 @@ bin64
 *.cachefile
 *.aps
 *.ncb
+*.cd
 
 # Unix by-products
 *.pdf

@@ -12,6 +12,7 @@ using namespace sc;
 
 #include <gl1util.h>
 #include <scenenode.h>
+#include <SOIL/SOIL.h>
 
 //appname
 static const char* appname = "Miles Rufat-Latre: Space Simulator 2014 Premium";
@@ -31,9 +32,13 @@ static unsigned int dt = 0;
 static bool resume = true;
 static Keyboard kb;
 //scene objects :D
-const char* testmeshfile = "media/testmesh.ply";
-void scenedrawmesh(void* data){drawmesh((aiMesh*)data);}
-void voiddrawfunc(void*){}
+static const char* shipmeshfile = "media/space_frigate_6/space_frigate_6.3DS";
+static const char* shiptexturefile =
+    "media/space_frigate_6/space_frigate_6_color.png";
+static GLuint shiptexid;
+static void scenedrawmesh(void* data){drawmesh((aiMesh*)data);}
+static void drawship(void* data)
+    {glBindTexture(GL_TEXTURE_2D, shiptexid); scenedrawmesh(data);}
 SceneNode* root = new SceneNode();
 SceneNode* left = new SceneNode(root);
 SceneNode* camera = new SceneNode(root);
@@ -99,25 +104,41 @@ static inline void initGL()
 {
     glClearColor(0.f, 0.f, 0.f, 1.f);
     glColor4f(0.5f, 0.5f, 0.5f, 1.f);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_TEXTURE_2D);
     perspective();
 }
 
 static inline void initscene()
 {
-    root->data = (void*)loadmesh(testmeshfile);
-    if(!root->data)
+    shiptexid = SOIL_load_OGL_texture(shiptexturefile, SOIL_LOAD_AUTO,
+                                      SOIL_CREATE_NEW_ID,
+                                      SOIL_FLAG_INVERT_Y);
+    aiMesh* shipmesh = loadmesh(shipmeshfile);
+    if(!shipmesh)
     {
-        fprintf(stderr, "Failed to load mesh: %s\n", testmeshfile);
+        fprintf(stderr, "Failed to load mesh: %s\n", shipmeshfile);
         exit(EXIT_FAILURE);
     }
-    root->f = scenedrawmesh;
+    mat4 tf = glm::rotate(mat4(1.f),
+            -glm::pi<float>() / 2.f, vec3(1.f, 0.f, 0.f));
+    for(unsigned int i = 0; i < shipmesh->mNumVertices; i++)
+    {
+        aiVector3D v3 = shipmesh->mVertices[i];
+        vec4 v4 = vec4(v3.x, v3.y, v3.z, 1.f);
+        v4 = tf * v4;
+        shipmesh->mVertices[i] = aiVector3D(v4.x, v4.y, v4.z);
+    }
+    root->data = (void*)shipmesh;
+    root->f = drawship;
     left->data = root->data;
-    left->f = scenedrawmesh;
-    left->t = glm::translate(mat4(1.f), vec3(0.f, 3.f, 0.f));
+    left->f = drawship;
+    left->t = glm::translate(mat4(1.f), vec3(0.f, 20.f, 0.f));
     left->t = glm::rotate(left->t, 2.f, vec3(0.f, 1.f, 0.f));
     camera->data = NULL;
     camera->f = SceneNode::nulldrawfunc;
-    camera->t = glm::translate(mat4(1.f), vec3(0.f, 0.f, -5.f));
+    camera->t = glm::translate(mat4(1.f), vec3(0.f, 0.f, -30.f));
 }
 
 static unsigned int oldms = ms;
@@ -156,7 +177,7 @@ static inline void mainloop()
 
 static inline void cleanscene()
 {
-    delete (aiMesh*)root->data;
+    //delete (aiMesh*)root->data; //deallocated by assimp Importer
     delete root;
 }
 
