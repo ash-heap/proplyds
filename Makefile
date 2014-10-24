@@ -54,25 +54,26 @@ $(OBJDIR)/%.o:$(SRCDIR)/%.cpp
 	@echo -e '\e[33mCOMPILING \e[96m$@\e[m \e[33mFROM \e[94m$^\e[m'
 	$(CXX) $(CFLAGS) -c $< -o $@
 
-packs: media.tar win3pdeps.tar
+packs: media.zip win3pdeps.zip
 
-media.tar: media
+media.zip: media
 	@echo -e '\e[33mCOMPRESSING \e[96m$@\e[m \e[33mFROM \e[94m$^\e[m'
-	tar cf $@ $^
+	zip -r $@ $^
 
-win3pdeps.tar: bin32 bin64 3p clean-windows
-	@echo -e '\e[33mCOMPRESSING \e[96m$@\e[m \e[33mFROM \e[94mbin32 bin64 3p\e[m'
-	tar cf $@ bin32 bin64 3p
+win3pdeps.zip: bin32 bin64 3p
+	@echo -e '\e[33mCOMPRESSING \e[96m$@\e[m \e[33mFROM \e[94m$^\e[m'
+	zip -r $@ $^
 
 clean:
 	@echo -e '\e[33mCLEANING...\e[m'
 	rm -f -v *~ $(MAIN_OBJECTS)
 
 clobber: clean
-	rm -f -v *~ $(OUTPUTS) main media.tar win3pdeps.tar
+	rm -f -v *~ $(OUTPUTS) main media.zip win3pdeps.zip
 
 clean-windows:
 	@echo -e '\e[33mCLEANING \e[96mproplyds*\e[m \e[33mFROM \e[94mbin32\e[m'
 	rm -rfv bin32/proplyds*
 	@echo -e '\e[33mCLEANING \e[96mproplyds*\e[m \e[33mFROM \e[94mbin64\e[m'
 	rm -rfv bin64/proplyds*
+

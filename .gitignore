@@ -1,6 +1,8 @@
-# C++, Tarball outputs
+# C++, package outputs
 *.o
 *.tar
+*.zip
+*.xz
 
 # Editor by-products
 *~
