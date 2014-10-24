@@ -17,7 +17,7 @@ Linux
 Windows
 -------
 
-- acquire and unzip the [media](https://www.dropbox.com/s/ioefl65xdvkfrk5/media.zip?dl=0) and [win3pdeps](https://www.dropbox.com/s/fxe6p08qhbv14q8/win3pdeps.zip?dl=0) packages into the source directory
+- acquire and unzip the [media](https://www.dropbox.com/s/ioefl65xdvkfrk5/media.zip?dl=0) and [win3pdeps](https://www.dropbox.com/s/fxe6p08qhbv14q8/win3pdeps.zip?dl=0) packages into the repository's root directory
 - run Visual Studio and load the .sln file
 - build and run
 
