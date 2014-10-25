@@ -40,6 +40,17 @@ void SceneNode::drawAll()
     glPopMatrix();
 }
 
+void SceneNode::orphan()
+{
+    for(std::vector<SceneNode*>::iterator i = parent->children.begin();
+        i != parent->children.end(); i++)
+    {
+        if(*i == this)
+            parent->children.erase(i);
+    }
+    parent = NULL;
+}
+
 bool SceneNode::sameTree(SceneNode* other)
 {
     SceneNode* a = this;

@@ -22,6 +22,10 @@ public:
 
     inline void draw(){f(data);}
     void drawAll();
+    
+    void orphan();
+    inline void adopt(SceneNode* newchild)
+        {children.push_back(newchild); newchild->parent = this;}
 
     inline bool isRoot(){return parent == NULL;}
     bool sameTree(SceneNode* other);
