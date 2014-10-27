@@ -14,6 +14,8 @@ using namespace sc;
 #include <scenenode.h>
 #include <SOIL/SOIL.h>
 
+#include <heightmap.h>
+
 //appname
 static const char* appname = "Miles Rufat-Latre: Space Simulator 2014 Premium";
 //window, infrastructure
@@ -35,13 +37,34 @@ static Keyboard kb;
 static const char* shipmeshfile = "media/space_frigate_6/space_frigate_6.3DS";
 static const char* shiptexturefile =
     "media/space_frigate_6/space_frigate_6_color.png";
+static const char* grasstexturefile = "media/grass.jpg";
+static GLuint grasstexid;
 static GLuint shiptexid;
 static void scenedrawmesh(void* data){drawmesh((aiMesh*)data);}
+static void scenedrawterrain(void* data)
+    {glBindTexture(GL_TEXTURE_2D, grasstexid); drawterrain((HeightMap*)data);}
 static void drawship(void* data)
     {glBindTexture(GL_TEXTURE_2D, shiptexid); scenedrawmesh(data);}
-SceneNode* root = new SceneNode();
-SceneNode* left = new SceneNode(root);
-SceneNode* camera = new SceneNode(root);
+static SceneNode* root = new SceneNode();
+static SceneNode* left = new SceneNode(root);
+static SceneNode* terrain = new SceneNode(root);
+static SceneNode* pivot = new SceneNode(root);
+static SceneNode* camera = new SceneNode(pivot);
+static HeightMap map = HeightMap(256.f, 2.f);
+static vec2 seed = vec2(2102.55f, 282.1221f);
+
+static float generator(vec2 pos)
+{
+    pos = pos + seed;
+    glm::vec2 poso100 = pos / 100.f;
+    glm::vec2 posp100o40 = (pos + glm::vec2(100.f, 100.f)) / 40.f;
+    glm::vec2 poso40 = pos / 40.f;
+    float big = 8.f * glm::simplex(poso100);
+    glm::vec2 med_offset = glm::vec2(glm::simplex(poso40), glm::simplex(posp100o40)) / 4.f;
+    float med = 2.f * glm::simplex(poso40 + med_offset);
+
+    return 2.f * (med + big);
+}
 
 static inline void perspective()
 {
@@ -112,9 +135,21 @@ static inline void initGL()
 
 static inline void initscene()
 {
+    map.gen(generator);
+    terrain->data = (void*)&map;
+    terrain->f = scenedrawterrain;
+    terrain->t = glm::translate(mat4(1.f),
+        vec3(-map.width * 0.5f, -30.f, -map.width * 0.5f));
     shiptexid = SOIL_load_OGL_texture(shiptexturefile, SOIL_LOAD_AUTO,
                                       SOIL_CREATE_NEW_ID,
                                       SOIL_FLAG_INVERT_Y);
+    grasstexid = SOIL_load_OGL_texture(grasstexturefile, SOIL_LOAD_AUTO,
+                                      SOIL_CREATE_NEW_ID,
+                                      SOIL_FLAG_INVERT_Y);
+    glBindTexture(GL_TEXTURE_2D, grasstexid);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    
     aiMesh* shipmesh = loadmesh(shipmeshfile);
     if(!shipmesh)
     {
@@ -138,7 +173,7 @@ static inline void initscene()
     left->t = glm::rotate(left->t, 2.f, vec3(0.f, 1.f, 0.f));
     camera->data = NULL;
     camera->f = SceneNode::nulldrawfunc;
-    camera->t = glm::translate(mat4(1.f), vec3(0.f, 0.f, -30.f));
+    camera->t = glm::translate(mat4(1.f), vec3(0.f, 0.f, -60.f));
 }
 
 static unsigned int oldms = ms;
@@ -148,13 +183,16 @@ static inline void update()
     ms = SDL_GetTicks();
     if(oldms > ms) dt = 0;
     else dt = ms - oldms;
-    
+    f32 dts = (float)dt / 1000.f;
+
     kb.reset();
     handleevents();
     if(kb.wasKeyPressed(SDLK_ESCAPE)) resume = false;
-    
-    root->t = glm::rotate(root->t, (float)dt / 1000.f, vec3(0.f, 1.f, 0.f));
-    left->t = glm::rotate(left->t, (float)dt / 500.f, vec3(0.f, 0.f, 1.f));
+    if(kb.isKeyDown(SDLK_a))
+        pivot->t = glm::rotate(pivot->t, dts, vec3(0.f, 1.f, 0.f));
+    if(kb.isKeyDown(SDLK_d))
+        pivot->t = glm::rotate(pivot->t, -dts, vec3(0.f, 1.f, 0.f));
+    left->t = glm::rotate(left->t, dts * 0.5f, vec3(0.f, 0.f, 1.f));
 }
 
 static inline void draw()

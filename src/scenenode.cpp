@@ -63,16 +63,16 @@ bool SceneNode::sameTree(SceneNode* other)
 mat4 SceneNode::getGlobTF()
 {
     mat4 a = t;
-    SceneNode* n = this;
-    for(; !n->isRoot(); n = n->parent) a = n->t * a;
+    SceneNode* n = parent;
+    for(; n; n = n->parent) a = a * n->t;
     return glm::inverse(a);
 }
 
 mat4 SceneNode::getInvGlobTF()
 {
     mat4 a = t;
-    SceneNode* n = this;
-    for(; !n->isRoot(); n = n->parent) a = n->t * a;
+    SceneNode* n = parent;
+    for(; n; n = n->parent) a = a * n->t;
     return a;
 }
 

@@ -3,6 +3,8 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <glm/gtc/type_ptr.hpp>
+using namespace sc;
 
 static Assimp::Importer* importer = new Assimp::Importer();
 
@@ -66,6 +68,36 @@ void drawmesh(aiMesh* mesh)
         glTexCoord3fv((float*)&uvs[indices[2]]);
         glNormal3fv((float*)&norms[indices[2]]);
         glVertex3fv((float*)&verts[indices[2]]);
+    }
+    glEnd();
+}
+
+void drawterrain(HeightMap* map)
+{
+    u32 res = map->res;
+    u32 lim = res - 1;
+    f32 frac = map->sqwidth / map->width;
+    vec2 tex = vec2(0.f, 0.f);
+    u32 idx = 0;
+    glBegin(GL_QUADS);
+    for(u32 i = 0; i < lim; i++)
+    {
+        for(u32 j = 0; j < lim; j++)
+        {
+            glTexCoord2f(tex.x, tex.y);
+            glVertex3fv(glm::value_ptr(map->data[idx]));
+            glTexCoord2f(tex.x, tex.y + frac);
+            glVertex3fv(glm::value_ptr(map->data[idx + res]));
+            glTexCoord2f(tex.x + frac, tex.y + frac);
+            glVertex3fv(glm::value_ptr(map->data[idx + res + 1]));
+            glTexCoord2f(tex.x + frac, tex.y);
+            glVertex3fv(glm::value_ptr(map->data[idx + 1]));
+            idx++;
+            tex.x += frac;
+        }
+        idx++;
+        tex.y += frac;
+        tex.x = 0.f;
     }
     glEnd();
 }

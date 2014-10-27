@@ -183,6 +183,7 @@
   <ItemGroup>
     <ClInclude Include="src\gl1util.h" />
     <ClInclude Include="src\glinc.h" />
+    <ClInclude Include="src\heightmap.h" />
     <ClInclude Include="src\scenenode.h" />
     <ClInclude Include="src\sciurus\keyboard.h" />
     <ClInclude Include="src\sciurus\opengl.h" />
