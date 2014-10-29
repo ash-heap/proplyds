@@ -86,7 +86,8 @@ static void drawlight(void* data)
 }
 static SceneNode* root = new SceneNode();
 static SceneNode* left = new SceneNode(root);
-static SceneNode* lighttable = new SceneNode(root);
+static SceneNode* tilttable = new SceneNode(root);
+static SceneNode* lighttable = new SceneNode(tilttable);
 static SceneNode* light = new SceneNode(lighttable);
 static SceneNode* terrain = new SceneNode(root);
 static SceneNode* turntable = new SceneNode(root);
@@ -252,6 +253,7 @@ static inline void update()
     if(kb.isKeyDown(SDLK_s))
         pivot->t = glm::rotate(pivot->t, -dts, vec3(1.f, 0.f, 0.f));
     left->t = glm::rotate(left->t, dts * 0.5f, vec3(0.f, 0.f, 1.f));
+    tilttable->t = glm::rotate(tilttable->t, dts / 8.f, vec3(0.f, 0.f, 1.f));
     lighttable->t = glm::rotate(lighttable->t, dts, vec3(0.f, 1.f, 0.f));
 }
 
