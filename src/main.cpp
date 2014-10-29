@@ -72,8 +72,17 @@ static void drawship(void* data)
     {glBindTexture(GL_TEXTURE_2D, shiptexid); scenedrawmesh(data);}
 static void drawlight(void* data)
 {
-    glLightfv(GL_LIGHT0, GL_POSITION,
-                glm::value_ptr(((SceneNode*)data)->t[3]));
+    vec4 pos = ((SceneNode*)data)->t[3];
+    glLightfv(GL_LIGHT0, GL_POSITION, glm::value_ptr(pos));
+    glDisable(GL_LIGHTING);
+    glDisable(GL_TEXTURE_2D);
+    glPointSize(5.f);
+    glColor3f(1.f, 1.f, 1.f);
+    glBegin(GL_POINTS);
+    glVertex3fv(glm::value_ptr(pos));
+    glEnd();
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_LIGHTING);
 }
 static SceneNode* root = new SceneNode();
 static SceneNode* left = new SceneNode(root);
@@ -177,7 +186,7 @@ static inline void initGL()
 static inline void initscene()
 {
     light->data = light;
-    light->t = glm::translate(mat4(1.f), vec3(20.f, 0.f, 0.f));
+    light->t = glm::translate(mat4(1.f), vec3(40.f, 0.f, 0.f));
     light->f = drawlight;
     map.gen(generator);
     terrain->data = (void*)&map;
