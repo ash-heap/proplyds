@@ -89,11 +89,24 @@ static void drawlight(void* data)
     glLightfv(GL_LIGHT0, GL_POSITION, glm::value_ptr(pos));
     glDisable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
-    glPointSize(5.f);
-    glColor3f(1.f, 1.f, 1.f);
+    glDepthMask(GL_FALSE);
+    glPointSize(30.f);
     glBegin(GL_POINTS);
+    glColor3f(0.3f, 0.3f, 0.2f);
     glVertex3fv(glm::value_ptr(pos));
     glEnd();
+    glPointSize(20.f);
+    glBegin(GL_POINTS);
+    glColor3f(0.7f, 0.7f, 0.6f);
+    glVertex3fv(glm::value_ptr(pos));
+    glEnd();
+    glPointSize(10.f);
+    glBegin(GL_POINTS);
+    glColor3f(1.f, 1.f, 0.9f);
+    glVertex3fv(glm::value_ptr(pos));
+    glEnd();
+    glVertex3fv(glm::value_ptr(pos));
+    glDepthMask(GL_TRUE);
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_LIGHTING);
 }
@@ -259,8 +272,8 @@ static inline void update()
     if(kb.isKeyDown(SDLK_s))
         pivot->t = glm::rotate(pivot->t, -dts, vec3(1.f, 0.f, 0.f));
     upper->t = glm::rotate(upper->t, -dts * 0.5f, vec3(0.f, 0.f, 1.f));
-    tilttable->t = glm::rotate(tilttable->t, dts / 8.f, vec3(0.f, 0.f, 1.f));
-    lighttable->t = glm::rotate(lighttable->t, dts, vec3(0.f, 1.f, 0.f));
+    tilttable->t = glm::rotate(tilttable->t, dts / 16.f, vec3(0.f, 0.f, 1.f));
+    lighttable->t = glm::rotate(lighttable->t, dts / 2.f, vec3(0.f, 1.f, 0.f));
     lower->t = glm::rotate(lower->t, -dts / 3.f, vec3(0.f, 1.f, 0.f));
 }
 
