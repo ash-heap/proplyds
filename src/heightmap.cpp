@@ -37,26 +37,18 @@ void HeightMap::gen(Generator g)
         vec3 curr = data[i];
         data[i].y = g(vec2(curr.x, curr.z));
     }
-    /*
     u32 lim = res - 1;
-    u32 idx = 0;
+    u32 idx = res + 1;
     for(u32 i = 1; i < lim; i++)
     {
         for(u32 j = 1; j < lim; j++)
         {
-            norms[idx] =
-                glm::normalize
-                (
-                    glm::cross
-                    (
-                        data[idx - res - 1] - data[idx - res + 1],
-                        data[idx + 1] - data[idx - res + 1]
-                    )
-                );
+            vec3 a = data[idx - res - 1] - data[idx - res + 1];
+            vec3 b = data[idx + 1] - data[idx - res + 1];
+            norms[idx] = glm::normalize(glm::cross(a, b));
             idx++;
         }
         idx += 2;
     }
-    */
 }
 
