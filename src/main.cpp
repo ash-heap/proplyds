@@ -32,44 +32,45 @@ static unsigned int dt = 0;
 static bool resume = true;
 static Keyboard kb;
 //scene objects :D
-
 static const char* shipmeshfile =
     "media/space_frigate_6/space_frigate_6.3DS";
 static const char* shiptexturefile =
     "media/space_frigate_6/space_frigate_6_color.png";
-//*/
-/*
-static const char* shipmeshfile =
-    "media/space_cruiser_4/space_cruiser_4.3DS";
-static const char* shiptexturefile =
-    "media/space_cruiser_4/space_cruiser_4_color.png";
-//*/
-/*
-static const char* shipmeshfile =
-    "media/dark_fighter_6/dark_fighter_6.3DS";
-static const char* shiptexturefile =
-    "media/dark_fighter_6/dark_fighter_6_color.png";
-//*/
-
 static const char* grasstexturefile = "media/grass.jpg";
 static GLuint grasstexid;
 static GLuint shiptexid;
-static void scenedrawmesh(void* data)
+static SceneNode* root = new SceneNode();
+static SceneNode* left = new SceneNode(root);
+static SceneNode* tilttable = new SceneNode(root);
+static SceneNode* lighttable = new SceneNode(tilttable);
+static SceneNode* light = new SceneNode(lighttable);
+static SceneNode* terrain = new SceneNode(root);
+static SceneNode* turntable = new SceneNode(root);
+static SceneNode* pivot = new SceneNode(turntable);
+static SceneNode* camera = new SceneNode(pivot);
+static HeightMap map = HeightMap(256.f, 2.f);
+static vec2 seed = vec2(2102.55f, 282.1221f);
+static vec4 lightdiffuse = vec4(1.f, 1.f, 1.f, 1.f);
+static vec4 lightspecular = vec4(0.8f, 0.8f, 0.8f, 1.f);
+static vec4 matdiffuse = vec4(1.f, 1.f, 1.f, 1.f);
+static vec4 matspecular = vec4(1.f, 1.f, 1.f, 1.f);
+static f32 matshine = 96.f;
+//functions for drawing scene objects
+static inline void scenedrawmesh(void* data){drawmesh((aiMesh*)data);}
+static void scenedrawmeshwithnorms(void* data)
 {
-    drawmesh((aiMesh*)data);
-    /*
+    scenedrawmesh(data);
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
     glColor3f(1.f, 0.f, 0.f);
     drawnorms((aiMesh*)data);
     glEnable(GL_LIGHTING);
     glEnable(GL_TEXTURE_2D);
-    */
 }
 static void scenedrawterrain(void* data)
     {glBindTexture(GL_TEXTURE_2D, grasstexid); drawterrain((HeightMap*)data);}
 static void drawship(void* data)
-    {glBindTexture(GL_TEXTURE_2D, shiptexid); scenedrawmesh(data);}
+    {glBindTexture(GL_TEXTURE_2D, shiptexid); scenedrawmeshwithnorms(data);}
 static void drawlight(void* data)
 {
     vec4 pos = ((SceneNode*)data)->t[3];
@@ -84,19 +85,6 @@ static void drawlight(void* data)
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_LIGHTING);
 }
-static SceneNode* root = new SceneNode();
-static SceneNode* left = new SceneNode(root);
-static SceneNode* tilttable = new SceneNode(root);
-static SceneNode* lighttable = new SceneNode(tilttable);
-static SceneNode* light = new SceneNode(lighttable);
-static SceneNode* terrain = new SceneNode(root);
-static SceneNode* turntable = new SceneNode(root);
-static SceneNode* pivot = new SceneNode(turntable);
-static SceneNode* camera = new SceneNode(pivot);
-static HeightMap map = HeightMap(256.f, 2.f);
-static vec2 seed = vec2(2102.55f, 282.1221f);
-static vec4 lightdiffuse = vec4(1.f, 1.f, 1.f, 1.f);
-static vec4 lightspecular = vec4(1.f, 1.f, 1.f, 1.f);
 
 static float generator(vec2 pos)
 {
@@ -175,7 +163,11 @@ static inline void initGL()
     glColor4f(0.5f, 0.5f, 0.5f, 1.f);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, glm::value_ptr(lightdiffuse));
     glLightfv(GL_LIGHT0, GL_SPECULAR, glm::value_ptr(lightspecular));
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, glm::value_ptr(matdiffuse));
+    glMaterialfv(GL_FRONT, GL_SPECULAR, glm::value_ptr(matspecular));
+    glMaterialfv(GL_FRONT, GL_SHININESS, &matshine);
     glShadeModel(GL_SMOOTH);
+    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, 0);
     glEnable(GL_LIGHT0);
     glEnable(GL_LIGHTING);
     glEnable(GL_DEPTH_TEST);
@@ -186,6 +178,7 @@ static inline void initGL()
 
 static inline void initscene()
 {
+    tilttable->t = glm::translate(tilttable->t, vec3(0.f, 50.f, 0.f));
     light->data = light;
     light->t = glm::translate(mat4(1.f), vec3(40.f, 0.f, 0.f));
     light->f = drawlight;

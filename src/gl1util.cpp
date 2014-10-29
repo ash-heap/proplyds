@@ -69,7 +69,7 @@ aiMesh* loadmesh(const char* filename, bool smooth)
         for(unsigned int j = 0; j < df->mNumIndices; j++)
             df->mIndices[j] = sf->mIndices[j];
     }
-    mknorms(dst);
+    //mknorms(dst);
     return dst;
 }
 
