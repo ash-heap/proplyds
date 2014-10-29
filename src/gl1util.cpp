@@ -10,7 +10,7 @@ using namespace sc;
 static Assimp::Importer* importer = new Assimp::Importer();
 
 //just in case
-static inline void mknorms(aiMesh* mesh)
+void mknorms(aiMesh* mesh)
 {
     for(unsigned int f = 0; f < mesh->mNumFaces; f++)
     {
@@ -69,7 +69,6 @@ aiMesh* loadmesh(const char* filename, bool smooth)
         for(unsigned int j = 0; j < df->mNumIndices; j++)
             df->mIndices[j] = sf->mIndices[j];
     }
-    //mknorms(dst);
     return dst;
 }
 

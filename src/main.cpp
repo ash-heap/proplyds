@@ -40,7 +40,8 @@ static const char* grasstexturefile = "media/grass.jpg";
 static GLuint grasstexid;
 static GLuint shiptexid;
 static SceneNode* root = new SceneNode();
-static SceneNode* left = new SceneNode(root);
+static SceneNode* lower = new SceneNode(root);
+static SceneNode* upper = new SceneNode(lower);
 static SceneNode* tilttable = new SceneNode(root);
 static SceneNode* lighttable = new SceneNode(tilttable);
 static SceneNode* light = new SceneNode(lighttable);
@@ -70,9 +71,18 @@ static void scenedrawmeshwithnorms(void* data)
 }
 */
 static void scenedrawterrain(void* data)
-    {glBindTexture(GL_TEXTURE_2D, grasstexid); drawterrain((HeightMap*)data);}
+{
+    GLfloat nilspec[4] = {0.f, 0.f, 0.f, 1.f};
+    glMaterialfv(GL_FRONT, GL_SPECULAR, nilspec);
+    glBindTexture(GL_TEXTURE_2D, grasstexid);
+    drawterrain((HeightMap*)data);
+}
 static void drawship(void* data)
-    {glBindTexture(GL_TEXTURE_2D, shiptexid); scenedrawmesh(data);}
+{
+    glMaterialfv(GL_FRONT, GL_SPECULAR, glm::value_ptr(lightspecular));
+    glBindTexture(GL_TEXTURE_2D, shiptexid);
+    scenedrawmesh(data);
+}
 static void drawlight(void* data)
 {
     vec4 pos = ((SceneNode*)data)->t[3];
@@ -209,19 +219,20 @@ static inline void initscene()
         aiVector3D v3 = shipmesh->mVertices[i];
         vec4 v4 = vec4(v3.x, v3.y, v3.z, 1.f);
         v4 = tf * v4;
-        shipmesh->mVertices[i] = aiVector3D(v4.x, v4.y, v4.z) * 10.f;
+        shipmesh->mVertices[i] = aiVector3D(v4.x, v4.y, v4.z) * 5.f;
         
         v3 = shipmesh->mNormals[i];
         v4 = vec4(v3.x, v3.y, v3.z, 1.f);
         v4 = tf * v4;
         shipmesh->mNormals[i] = aiVector3D(v4.x, v4.y, v4.z);
     }
-    root->data = (void*)shipmesh;
-    root->f = drawship;
-    left->data = root->data;
-    left->f = drawship;
-    left->t = glm::translate(mat4(1.f), vec3(0.f, 20.f, 0.f));
-    left->t = glm::rotate(left->t, 2.f, vec3(0.f, 1.f, 0.f));
+    mknorms(shipmesh);
+    lower->data = (void*)shipmesh;
+    lower->f = drawship;
+    upper->data = lower->data;
+    upper->f = drawship;
+    upper->t = glm::translate(mat4(1.f), vec3(0.f, 20.f, 0.f));
+    //upper->t = glm::rotate(upper->t, 2.f, vec3(0.f, 1.f, 0.f));
     camera->data = NULL;
     camera->f = SceneNode::nulldrawfunc;
     camera->t = glm::translate(mat4(1.f), vec3(0.f, 0.f, -60.f));
@@ -247,9 +258,10 @@ static inline void update()
         pivot->t = glm::rotate(pivot->t, dts, vec3(1.f, 0.f, 0.f));
     if(kb.isKeyDown(SDLK_s))
         pivot->t = glm::rotate(pivot->t, -dts, vec3(1.f, 0.f, 0.f));
-    left->t = glm::rotate(left->t, dts * 0.5f, vec3(0.f, 0.f, 1.f));
+    upper->t = glm::rotate(upper->t, -dts * 0.5f, vec3(0.f, 0.f, 1.f));
     tilttable->t = glm::rotate(tilttable->t, dts / 8.f, vec3(0.f, 0.f, 1.f));
     lighttable->t = glm::rotate(lighttable->t, dts, vec3(0.f, 1.f, 0.f));
+    lower->t = glm::rotate(lower->t, -dts / 3.f, vec3(0.f, 1.f, 0.f));
 }
 
 static inline void draw()

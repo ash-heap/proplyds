@@ -9,6 +9,7 @@
 
 aiMesh* loadmesh(const char* filename, bool smooth = false);
 GLuint loadtexture(const char* filename);
+void mknorms(aiMesh* mesh);
 void drawmesh(aiMesh* mesh);
 void drawnorms(aiMesh* mesh, float len = 1.f);
 void drawterrain(HeightMap* map);
