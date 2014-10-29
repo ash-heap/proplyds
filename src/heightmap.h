@@ -8,6 +8,7 @@ struct HeightMap
     typedef sc::f32 (*Generator)(sc::vec2);
 
     sc::vec3* data;
+    sc::vec3* norms;
     sc::u32 res;
     sc::u32 tot;
     sc::f32 width;

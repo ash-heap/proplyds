@@ -8,7 +8,9 @@
 #include <heightmap.h>
 
 aiMesh* loadmesh(const char* filename, bool smooth = false);
+GLuint loadtexture(const char* filename);
 void drawmesh(aiMesh* mesh);
+void drawnorms(aiMesh* mesh, float len = 1.f);
 void drawterrain(HeightMap* map);
 void drawaxes(float dim = 1.f);
 void drawgrid(float xmin, float xmax,

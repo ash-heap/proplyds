@@ -12,8 +12,6 @@ using namespace sc;
 
 #include <gl1util.h>
 #include <scenenode.h>
-#include <SOIL/SOIL.h>
-
 #include <heightmap.h>
 
 //appname
@@ -34,24 +32,61 @@ static unsigned int dt = 0;
 static bool resume = true;
 static Keyboard kb;
 //scene objects :D
-static const char* shipmeshfile = "media/space_frigate_6/space_frigate_6.3DS";
+
+static const char* shipmeshfile =
+    "media/space_frigate_6/space_frigate_6.3DS";
 static const char* shiptexturefile =
     "media/space_frigate_6/space_frigate_6_color.png";
+//*/
+/*
+static const char* shipmeshfile =
+    "media/space_cruiser_4/space_cruiser_4.3DS";
+static const char* shiptexturefile =
+    "media/space_cruiser_4/space_cruiser_4_color.png";
+//*/
+/*
+static const char* shipmeshfile =
+    "media/dark_fighter_6/dark_fighter_6.3DS";
+static const char* shiptexturefile =
+    "media/dark_fighter_6/dark_fighter_6_color.png";
+//*/
+
 static const char* grasstexturefile = "media/grass.jpg";
 static GLuint grasstexid;
 static GLuint shiptexid;
-static void scenedrawmesh(void* data){drawmesh((aiMesh*)data);}
+static void scenedrawmesh(void* data)
+{
+    drawmesh((aiMesh*)data);
+    /*
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_LIGHTING);
+    glColor3f(1.f, 0.f, 0.f);
+    drawnorms((aiMesh*)data);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_TEXTURE_2D);
+    */
+}
 static void scenedrawterrain(void* data)
     {glBindTexture(GL_TEXTURE_2D, grasstexid); drawterrain((HeightMap*)data);}
 static void drawship(void* data)
     {glBindTexture(GL_TEXTURE_2D, shiptexid); scenedrawmesh(data);}
+static void drawlight(void* data)
+{
+    glLightfv(GL_LIGHT0, GL_POSITION,
+                glm::value_ptr(((SceneNode*)data)->t[3]));
+}
 static SceneNode* root = new SceneNode();
 static SceneNode* left = new SceneNode(root);
+static SceneNode* lighttable = new SceneNode(root);
+static SceneNode* light = new SceneNode(lighttable);
 static SceneNode* terrain = new SceneNode(root);
-static SceneNode* pivot = new SceneNode(root);
+static SceneNode* turntable = new SceneNode(root);
+static SceneNode* pivot = new SceneNode(turntable);
 static SceneNode* camera = new SceneNode(pivot);
 static HeightMap map = HeightMap(256.f, 2.f);
 static vec2 seed = vec2(2102.55f, 282.1221f);
+static vec4 lightdiffuse = vec4(1.f, 1.f, 1.f, 1.f);
+static vec4 lightspecular = vec4(1.f, 1.f, 1.f, 1.f);
 
 static float generator(vec2 pos)
 {
@@ -60,10 +95,11 @@ static float generator(vec2 pos)
     glm::vec2 posp100o40 = (pos + glm::vec2(100.f, 100.f)) / 40.f;
     glm::vec2 poso40 = pos / 40.f;
     float big = 8.f * glm::simplex(poso100);
-    glm::vec2 med_offset = glm::vec2(glm::simplex(poso40), glm::simplex(posp100o40)) / 4.f;
+    glm::vec2 med_offset =
+        glm::vec2(glm::simplex(poso40), glm::simplex(posp100o40)) / 4.f;
     float med = 2.f * glm::simplex(poso40 + med_offset);
 
-    return 2.f * (med + big);
+    return (med + big);
 }
 
 static inline void perspective()
@@ -127,6 +163,11 @@ static inline void initGL()
 {
     glClearColor(0.f, 0.f, 0.f, 1.f);
     glColor4f(0.5f, 0.5f, 0.5f, 1.f);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, glm::value_ptr(lightdiffuse));
+    glLightfv(GL_LIGHT0, GL_SPECULAR, glm::value_ptr(lightspecular));
+    glShadeModel(GL_SMOOTH);
+    glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHTING);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glEnable(GL_TEXTURE_2D);
@@ -135,17 +176,16 @@ static inline void initGL()
 
 static inline void initscene()
 {
+    light->data = light;
+    light->t = glm::translate(mat4(1.f), vec3(20.f, 0.f, 0.f));
+    light->f = drawlight;
     map.gen(generator);
     terrain->data = (void*)&map;
     terrain->f = scenedrawterrain;
     terrain->t = glm::translate(mat4(1.f),
         vec3(-map.width * 0.5f, -30.f, -map.width * 0.5f));
-    shiptexid = SOIL_load_OGL_texture(shiptexturefile, SOIL_LOAD_AUTO,
-                                      SOIL_CREATE_NEW_ID,
-                                      SOIL_FLAG_INVERT_Y);
-    grasstexid = SOIL_load_OGL_texture(grasstexturefile, SOIL_LOAD_AUTO,
-                                      SOIL_CREATE_NEW_ID,
-                                      SOIL_FLAG_INVERT_Y);
+    shiptexid = loadtexture(shiptexturefile);
+    grasstexid = loadtexture(grasstexturefile);
     glBindTexture(GL_TEXTURE_2D, grasstexid);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -157,13 +197,19 @@ static inline void initscene()
         exit(EXIT_FAILURE);
     }
     mat4 tf = glm::rotate(mat4(1.f),
-            -glm::pi<float>() / 2.f, vec3(1.f, 0.f, 0.f));
+            -glm::pi<float>() / 2.f, vec3(0.f, 1.f, 0.f));
+    tf = glm::rotate(tf, -glm::pi<float>() / 2.f, vec3(1.f, 0.f, 0.f));
     for(unsigned int i = 0; i < shipmesh->mNumVertices; i++)
     {
         aiVector3D v3 = shipmesh->mVertices[i];
         vec4 v4 = vec4(v3.x, v3.y, v3.z, 1.f);
         v4 = tf * v4;
         shipmesh->mVertices[i] = aiVector3D(v4.x, v4.y, v4.z);
+        
+        v3 = shipmesh->mNormals[i];
+        v4 = vec4(v3.x, v3.y, v3.z, 1.f);
+        v4 = tf * v4;
+        shipmesh->mNormals[i] = aiVector3D(v4.x, v4.y, v4.z);
     }
     root->data = (void*)shipmesh;
     root->f = drawship;
@@ -189,10 +235,15 @@ static inline void update()
     handleevents();
     if(kb.wasKeyPressed(SDLK_ESCAPE)) resume = false;
     if(kb.isKeyDown(SDLK_a))
-        pivot->t = glm::rotate(pivot->t, dts, vec3(0.f, 1.f, 0.f));
+        turntable->t = glm::rotate(turntable->t, dts, vec3(0.f, 1.f, 0.f));
     if(kb.isKeyDown(SDLK_d))
-        pivot->t = glm::rotate(pivot->t, -dts, vec3(0.f, 1.f, 0.f));
+        turntable->t = glm::rotate(turntable->t, -dts, vec3(0.f, 1.f, 0.f));
+    if(kb.isKeyDown(SDLK_w))
+        pivot->t = glm::rotate(pivot->t, dts, vec3(1.f, 0.f, 0.f));
+    if(kb.isKeyDown(SDLK_s))
+        pivot->t = glm::rotate(pivot->t, -dts, vec3(1.f, 0.f, 0.f));
     left->t = glm::rotate(left->t, dts * 0.5f, vec3(0.f, 0.f, 1.f));
+    lighttable->t = glm::rotate(lighttable->t, dts, vec3(0.f, 1.f, 0.f));
 }
 
 static inline void draw()
@@ -231,7 +282,6 @@ int main(int argc, char** argv)
         exit(EXIT_FAILURE);
     }
     initGL();
-    
     initscene();
     
     //do one frame of execution before showing, to prevent blank screen
@@ -242,10 +292,8 @@ int main(int argc, char** argv)
     mainloop();
     
     cleanscene();
-    
     delete window;
     sc_quit();
-
     exit(EXIT_SUCCESS);
 }
 

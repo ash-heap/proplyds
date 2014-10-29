@@ -4,9 +4,32 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <glm/gtc/type_ptr.hpp>
+#include <SOIL/SOIL.h>
 using namespace sc;
 
 static Assimp::Importer* importer = new Assimp::Importer();
+
+//just in case
+static inline void mknorms(aiMesh* mesh)
+{
+    for(unsigned int f = 0; f < mesh->mNumFaces; f++)
+    {
+        unsigned int* indices = mesh->mFaces[f].mIndices;
+        aiVector3D a = mesh->mVertices[indices[0]];
+        aiVector3D b = mesh->mVertices[indices[1]];
+        aiVector3D c = mesh->mVertices[indices[2]];
+        aiVector3D u = b - a;
+        aiVector3D v = c - a;
+        aiVector3D norm;
+        norm.x = u[1] * v[2] - u[2] * v[1];
+        norm.y = u[2] * v[0] - u[0] * v[2];
+        norm.z = u[0] * v[1] - u[1] * v[0];
+        norm = norm.Normalize();
+        mesh->mNormals[indices[0]] = norm;
+        mesh->mNormals[indices[1]] = norm;
+        mesh->mNormals[indices[2]] = norm;
+    }
+}
 
 aiMesh* loadmesh(const char* filename, bool smooth)
 {
@@ -16,26 +39,25 @@ aiMesh* loadmesh(const char* filename, bool smooth)
         | aiProcess_Triangulate
         | aiProcess_RemoveRedundantMaterials
         | aiProcess_ImproveCacheLocality
-        | aiProcess_FixInfacingNormals
         | aiProcess_OptimizeMeshes
         | aiProcess_OptimizeGraph
         | (smooth ? aiProcess_GenSmoothNormals : aiProcess_GenNormals)
     );
 	if(!scene) return NULL;
-	//return scene->mMeshes[0];
     aiMesh* dst = new aiMesh();
     aiMesh* src = scene->mMeshes[0];
     dst->mNumVertices = src->mNumVertices;
     dst->mVertices = new aiVector3D[dst->mNumVertices];
+    dst->mNormals = new aiVector3D[dst->mNumVertices];
     for(unsigned int i = 0; i < src->GetNumUVChannels(); i++)
         dst->mTextureCoords[i] = new aiVector3D[dst->mNumVertices];
     for(unsigned int i = 0; i < dst->mNumVertices; i++)
     {
+        dst->mNormals[i] = src->mNormals[i];
         dst->mVertices[i] = src->mVertices[i];
         for(unsigned int j = 0; j < src->GetNumUVChannels(); j++)
             dst->mTextureCoords[j][i] = src->mTextureCoords[j][i];
     }
-    dst->mNormals = new aiVector3D[dst->mNumVertices];
     dst->mNumFaces = src->mNumFaces;
     dst->mFaces = new aiFace[dst->mNumFaces];
     for(unsigned int i = 0; i < dst->mNumFaces; i++)
@@ -47,7 +69,15 @@ aiMesh* loadmesh(const char* filename, bool smooth)
         for(unsigned int j = 0; j < df->mNumIndices; j++)
             df->mIndices[j] = sf->mIndices[j];
     }
+    mknorms(dst);
     return dst;
+}
+
+GLuint loadtexture(const char* filename)
+{
+    return SOIL_load_OGL_texture(filename, SOIL_LOAD_AUTO,
+                                        SOIL_CREATE_NEW_ID,
+                                        SOIL_FLAG_INVERT_Y);
 }
 
 void drawmesh(aiMesh* mesh)
@@ -56,7 +86,7 @@ void drawmesh(aiMesh* mesh)
     aiVector3D* norms = mesh->mNormals;
     aiVector3D* uvs = mesh->mTextureCoords[0];
     glBegin(GL_TRIANGLES);
-    for(unsigned int f = 0; f < mesh->mNumFaces; f++)
+    for(u32 f = 0; f < mesh->mNumFaces; f++)
     {
         unsigned int* indices = mesh->mFaces[f].mIndices;
         glTexCoord3fv((float*)&uvs[indices[0]]);
@@ -68,6 +98,21 @@ void drawmesh(aiMesh* mesh)
         glTexCoord3fv((float*)&uvs[indices[2]]);
         glNormal3fv((float*)&norms[indices[2]]);
         glVertex3fv((float*)&verts[indices[2]]);
+    }
+    glEnd();
+}
+
+void drawnorms(aiMesh* mesh, float len)
+{
+    aiVector3D* verts = mesh->mVertices;
+    aiVector3D* norms = mesh->mNormals;
+    aiVector3D sum;
+    glBegin(GL_LINES);
+    for(u32 i = 0; i < mesh->mNumVertices; i++)
+    {
+        glVertex3fv((float*)&verts[i]);
+        sum = verts[i] + (len * norms[i]);
+        glVertex3fv((float*)&sum);
     }
     glEnd();
 }
@@ -85,12 +130,16 @@ void drawterrain(HeightMap* map)
         for(u32 j = 0; j < lim; j++)
         {
             glTexCoord2f(tex.x, tex.y);
+            glNormal3fv(glm::value_ptr(map->norms[idx]));
             glVertex3fv(glm::value_ptr(map->data[idx]));
             glTexCoord2f(tex.x, tex.y + frac);
+            glNormal3fv(glm::value_ptr(map->norms[idx + res]));
             glVertex3fv(glm::value_ptr(map->data[idx + res]));
             glTexCoord2f(tex.x + frac, tex.y + frac);
+            glNormal3fv(glm::value_ptr(map->norms[idx + res + 1]));
             glVertex3fv(glm::value_ptr(map->data[idx + res + 1]));
             glTexCoord2f(tex.x + frac, tex.y);
+            glNormal3fv(glm::value_ptr(map->norms[idx + 1]));
             glVertex3fv(glm::value_ptr(map->data[idx + 1]));
             idx++;
             tex.x += frac;
