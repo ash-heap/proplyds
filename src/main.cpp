@@ -33,7 +33,7 @@ static bool resume = true;
 static Keyboard kb;
 //scene objects :D
 static const char* shipmeshfile =
-    "media/space_frigate_6/space_frigate_6.3DS";
+    "media/space_frigate_6/space_frigate_6_mod.3DS";
 static const char* shiptexturefile =
     "media/space_frigate_6/space_frigate_6_color.png";
 static const char* grasstexturefile = "media/grass.jpg";
@@ -54,9 +54,10 @@ static vec4 lightdiffuse = vec4(1.f, 1.f, 1.f, 1.f);
 static vec4 lightspecular = vec4(0.8f, 0.8f, 0.8f, 1.f);
 static vec4 matdiffuse = vec4(1.f, 1.f, 1.f, 1.f);
 static vec4 matspecular = vec4(1.f, 1.f, 1.f, 1.f);
-static f32 matshine = 96.f;
+static f32 matshine = 100.f;
 //functions for drawing scene objects
 static inline void scenedrawmesh(void* data){drawmesh((aiMesh*)data);}
+/*
 static void scenedrawmeshwithnorms(void* data)
 {
     scenedrawmesh(data);
@@ -67,10 +68,11 @@ static void scenedrawmeshwithnorms(void* data)
     glEnable(GL_LIGHTING);
     glEnable(GL_TEXTURE_2D);
 }
+*/
 static void scenedrawterrain(void* data)
     {glBindTexture(GL_TEXTURE_2D, grasstexid); drawterrain((HeightMap*)data);}
 static void drawship(void* data)
-    {glBindTexture(GL_TEXTURE_2D, shiptexid); scenedrawmeshwithnorms(data);}
+    {glBindTexture(GL_TEXTURE_2D, shiptexid); scenedrawmesh(data);}
 static void drawlight(void* data)
 {
     vec4 pos = ((SceneNode*)data)->t[3];
@@ -207,7 +209,7 @@ static inline void initscene()
         aiVector3D v3 = shipmesh->mVertices[i];
         vec4 v4 = vec4(v3.x, v3.y, v3.z, 1.f);
         v4 = tf * v4;
-        shipmesh->mVertices[i] = aiVector3D(v4.x, v4.y, v4.z);
+        shipmesh->mVertices[i] = aiVector3D(v4.x, v4.y, v4.z) * 10.f;
         
         v3 = shipmesh->mNormals[i];
         v4 = vec4(v3.x, v3.y, v3.z, 1.f);
