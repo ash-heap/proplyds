@@ -6,19 +6,10 @@
 using namespace sc;
 using namespace std;
 
-/*
-extern "C"{
 ComponentType SceneNode::type = {
     "SceneNode",
     "Keeps track of relative transformations and methods for drawing objects",
     NULL
-};
-}
-*/
-ComponentType SceneNode::type = {
-    .name = "SceneNode",
-    .info = "Keeps track of relative transformation and methods for drawing objects",
-    .userdata = NULL
 };
 
 const ComponentType* const SceneNode::getComponentType()
