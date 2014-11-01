@@ -184,7 +184,12 @@
     <ClInclude Include="src\gl1util.h" />
     <ClInclude Include="src\glinc.h" />
     <ClInclude Include="src\heightmap.h" />
+    <ClInclude Include="src\ioupdatefunc.h" />
+    <ClInclude Include="src\ioupdater.h" />
     <ClInclude Include="src\scenenode.h" />
+    <ClInclude Include="src\scenetree.h" />
+    <ClInclude Include="src\sciurus\component.h" />
+    <ClInclude Include="src\sciurus\entity.h" />
     <ClInclude Include="src\sciurus\keyboard.h" />
     <ClInclude Include="src\sciurus\opengl.h" />
     <ClInclude Include="src\sciurus\sciurus.h" />
@@ -193,8 +198,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\gl1util.cpp" />
+    <ClCompile Include="src\heightmap.cpp" />
+    <ClCompile Include="src\ioupdatefunc.cpp" />
+    <ClCompile Include="src\ioupdater.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\scenenode.cpp" />
+    <ClCompile Include="src\scenetree.cpp" />
+    <ClCompile Include="src\sciurus\component.cpp" />
+    <ClCompile Include="src\sciurus\entity.cpp" />
     <ClCompile Include="src\sciurus\keyboard.cpp" />
     <ClCompile Include="src\sciurus\sciurus.cpp" />
     <ClCompile Include="src\sciurus\window.cpp" />

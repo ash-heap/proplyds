@@ -1,7 +1,8 @@
 #include <sciurus/sciurus.h>
 #include <sciurus/window.h>
 #include <sciurus/keyboard.h>
-using namespace sc;
+#include <sciurus/entity.h>
+
 #include <cstdlib>
 #include <cstdio>
 #include <glm/glm.hpp>
@@ -13,6 +14,7 @@ using namespace sc;
 #include <gl1util.h>
 #include <scenenode.h>
 #include <heightmap.h>
+using namespace sc;
 
 //appname
 static const char* appname = "Miles Rufat-Latre: Space Simulator 2014 Premium";
@@ -281,8 +283,7 @@ static inline void draw()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    glMultMatrixf(glm::value_ptr(camera->getInvGlobTF()));
-    root->drawAll();
+    camera->drawScene();
     window->swapBuffers();
 }
 
@@ -297,7 +298,7 @@ static inline void mainloop()
 
 static inline void cleanscene()
 {
-    delete (aiMesh*)root->data;
+    delete (aiMesh*)lower->data;
     delete root;
 }
 

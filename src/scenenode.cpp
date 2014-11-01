@@ -6,21 +6,47 @@
 using namespace sc;
 using namespace std;
 
+/*
+extern "C"{
+ComponentType SceneNode::type = {
+    "SceneNode",
+    "Keeps track of relative transformations and methods for drawing objects",
+    NULL
+};
+}
+*/
+ComponentType SceneNode::type = {
+    .name = "SceneNode",
+    .info = "Keeps track of relative transformation and methods for drawing objects",
+    .userdata = NULL
+};
+
+const ComponentType* const SceneNode::getComponentType()
+    {return &type;}
+
 SceneNode::SceneNode()
 {
     t = mat4(1.f);
     f = nulldrawfunc;
     parent = NULL;
     children = vector<SceneNode*>();
+    owner = NULL;
 }
 
-SceneNode::SceneNode(SceneNode* parent)
+SceneNode::SceneNode(SceneNode* parent, Entity* owner)
 {
     t = mat4(1.f);
     f = nulldrawfunc;
     this->parent = parent;
     parent->children.push_back(this);
     children = vector<SceneNode*>();
+    if(owner)
+    {
+        this->owner = owner;
+        owner->addComponent(this);
+    }
+    else
+        this->owner = NULL;
 }
 
 SceneNode::~SceneNode()
@@ -28,15 +54,31 @@ SceneNode::~SceneNode()
     u32 size = (u32)children.size();
     for(u32 i = 0; i < size; i++)
         delete children[i];
+    if(owner) owner->rmComponent(this);
 }
 
-void SceneNode::drawAll()
+void SceneNode::draw()
 {
     glPushMatrix();
     glMultMatrixf(glm::value_ptr(t));
     f(data);
     u32 size = (u32)children.size();
-    for(u32 i = 0; i < size; i++) children[i]->drawAll();
+    for(u32 i = 0; i < size; i++) children[i]->draw();
+    glPopMatrix();
+}
+
+SceneNode* SceneNode::getRoot()
+{
+    SceneNode* result = this;
+    while(result->parent) result = result->parent;
+    return result;
+}
+
+void SceneNode::drawScene()
+{
+    glPushMatrix();
+    glMultMatrixf(glm::value_ptr(getInvGlobTF()));
+    getRoot()->draw();
     glPopMatrix();
 }
 
