@@ -16,9 +16,10 @@ public:
 
     const sc::ComponentType* const getComponentType();
     
-    void (*func)(sc::Entity* owner, sc::f32 dt);
+    void (*func)(sc::f32 dt, void* userdata, sc::Entity* owner);
+    void* userdata;
     
-    inline void call(sc::f32 dt){func(owner, dt);}
+    inline void call(sc::f32 dt){func(dt, userdata, owner);}
 };
 
 #endif

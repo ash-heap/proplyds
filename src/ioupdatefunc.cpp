@@ -15,6 +15,7 @@ IOUpdateFunc::IOUpdateFunc(Entity* owner)
 {
     this->owner = owner;
     if(owner) owner->addComponent(this);
+    userdata = NULL;
 }
 
 IOUpdateFunc::~IOUpdateFunc()
