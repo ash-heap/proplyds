@@ -1,0 +1,17 @@
+
+Question: How to pass global information to systems and their components?
+
+Answer: Make Entities containing global information.
+
+Implementation...
+
+    Window should be a Component, and the WindowManager should filter SDL events
+    so that they are only passed to the windows they pertain to.
+    
+    Some systems should be owned by specific entities, and their processing
+    commands should gather information about those entities.
+    
+    This is a generalization of ECS frameworks that admits the possibility that
+    systems should not be singletons, that they shouldn't be purely executive,
+    and it allows the use of the model throughout the depth of the engine.
+    

@@ -13,6 +13,7 @@
 
 #include <gl1util.h>
 #include <scenenode.h>
+#include <scenetree.h>
 #include <heightmap.h>
 using namespace sc;
 
@@ -34,6 +35,7 @@ static unsigned int dt = 0;
 static bool resume = true;
 static Keyboard kb;
 //scene objects :D
+static SceneTree* sceneTree;
 static const char* shipmeshfile =
     "media/space_frigate_6/space_frigate_6_mod.3DS";
 static const char* shiptexturefile =
@@ -41,20 +43,10 @@ static const char* shiptexturefile =
 static const char* grasstexturefile = "media/grass.jpg";
 static GLuint grasstexid;
 static GLuint shiptexid;
-static SceneNode* root = new SceneNode();
-static SceneNode* lower = new SceneNode(root);
-static SceneNode* upper = new SceneNode(lower);
-static SceneNode* tilttable = new SceneNode(root);
-static SceneNode* lighttable = new SceneNode(tilttable);
-static SceneNode* light = new SceneNode(lighttable);
-static SceneNode* terrain = new SceneNode(root);
-static SceneNode* turntable = new SceneNode(root);
-static SceneNode* pivot = new SceneNode(turntable);
-static SceneNode* camera = new SceneNode(pivot);
-static HeightMap map = HeightMap(256.f, 2.f);
+static HeightMap map = HeightMap(1024.f, 8.f);
 static vec2 seed = vec2(2102.55f, 282.1221f);
 static vec4 lightdiffuse = vec4(1.f, 1.f, 1.f, 1.f);
-static vec4 lightspecular = vec4(0.8f, 0.8f, 0.8f, 1.f);
+static vec4 lightspecular = vec4(1.f, 1.f, 1.f, 1.f);
 static vec4 matdiffuse = vec4(1.f, 1.f, 1.f, 1.f);
 static vec4 matspecular = vec4(1.f, 1.f, 1.f, 1.f);
 static f32 matshine = 100.f;
@@ -205,6 +197,17 @@ static inline void initGL()
 
 static inline void initscene()
 {
+    SceneNode* root = new SceneNode();
+    SceneNode* lower = new SceneNode(root);
+    SceneNode* upper = new SceneNode(lower);
+    SceneNode* tilttable = new SceneNode(root);
+    SceneNode* lighttable = new SceneNode(tilttable);
+    SceneNode* light = new SceneNode(lighttable);
+    SceneNode* terrain = new SceneNode(root);
+    SceneNode* turntable = new SceneNode(root);
+    SceneNode* pivot = new SceneNode(turntable);
+    SceneNode* camera = new SceneNode(pivot);
+
     tilttable->t = glm::translate(tilttable->t, vec3(0.f, 50.f, 0.f));
     light->data = light;
     light->t = glm::translate(mat4(1.f), vec3(40.f, 0.f, 0.f));

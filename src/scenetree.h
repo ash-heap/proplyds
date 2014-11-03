@@ -9,6 +9,8 @@
 class SceneTree
 {
 public:
+    SceneTree();
+
     SceneNode* camera;
     std::vector<SceneNode*> nodes;
     
