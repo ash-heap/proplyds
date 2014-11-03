@@ -10,6 +10,7 @@ namespace sc
 class Entity
 {
 protected:
+    friend class Component;
     std::vector<Component*> c;
 
 public:

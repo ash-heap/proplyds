@@ -6,12 +6,9 @@
 namespace sc
 {
 
+//if people want to store information in this type, they should extend it
 struct ComponentType
 {
-    std::string name; //name of the component type (ex: "transform")
-    std::string info; //info of the component type
-    //ex: "describes transformation of entity relative to scene parent"
-    void* userdata; //pointers to other data for global access!
 };
 
 class Component
