@@ -11,7 +11,7 @@ OBJDIR=$(SRCDIR)
 #    as soon as it is needed.
 BINS=main
 
-OMAIN=main.o gl1util.o scenenode.o heightmap.o sciurus/sciurus.o sciurus/window.o sciurus/keyboard.o
+OMAIN=main.o gl1util.o scenenode.o heightmap.o sciurus/sciurus.o sciurus/window.o sciurus/keyboard.o sciurus/shaderprogram.o sciurus/shader.o
 MAIN_OBJECTS=$(OMAIN:%=$(OBJDIR)/%)
 
 OUTPUTS=$(BINS:%=$(BINDIR)/%)
