@@ -139,7 +139,7 @@ void dlistCat(struct DList* const dlist0, struct DList* const dlist1)
     } else if (dlist1->head != NULL) {
         dlist0->tail->next = dlist1->head;
         dlist1->head->prev = dlist0->tail;
-        dlist0->tail = dlist0->tail;
+        dlist0->tail = dlist1->tail;
     }
 
     // Free the second list.
