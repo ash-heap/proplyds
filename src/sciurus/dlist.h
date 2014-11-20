@@ -18,20 +18,20 @@ struct DListNode;
 
 struct DList* dlistNew();
 
-struct DList* const dlistCopy(struct DList* const dlist);
+struct DList* dlistCopy(struct DList* const dlist);
 
 void dlistDelete(struct DList* const dlist);
 
 
 
 
-struct DListNode* const dlistHead(struct DList* const dlist);
+struct DListNode* dlistHead(struct DList* const dlist);
 
-struct DListNode* const dlistTail(struct DList* const dlist);
+struct DListNode* dlistTail(struct DList* const dlist);
 
-struct DListNode* const dlistNodePrev(struct DListNode* node);
+struct DListNode* dlistNodePrev(struct DListNode* node);
 
-struct DListNode* const dlistNodeNext(struct DListNode* node);
+struct DListNode* dlistNodeNext(struct DListNode* node);
 
 
 

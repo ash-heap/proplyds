@@ -18,12 +18,12 @@
 
 
 static
-struct OctreeNode* const _octreeNodeNewLeaf(const float center[3],
-                                            const float halfSize[3]);
+struct OctreeNode* _octreeNodeNewLeaf(const float center[3],
+                                      const float halfSize[3]);
 
 static
-struct OctreeNode* const _octreeNodeNewInterior(const float center[3],
-                                                const float halfSize[3]);
+struct OctreeNode* _octreeNodeNewInterior(const float center[3],
+                                          const float halfSize[3]);
 
 static
 void _octreeNodeDelete(struct OctreeNode* node);
@@ -32,27 +32,27 @@ void _octreeNodeDelete(struct OctreeNode* node);
 
 
 static
-struct OctreeNode* const _octreeNodeInsert(struct OctreeNode* const node,
-                                           const float coord[3],
-                                           void* data);
+struct OctreeNode* _octreeNodeInsert(struct OctreeNode* const node,
+                                     const float coord[3],
+                                     void* data);
 
 static
-struct OctreeNode* const _octreeNodeRemove(struct OctreeNode* const node,
-                                           const float coord[3],
-                                           int* errorCode);
+struct OctreeNode* _octreeNodeRemove(struct OctreeNode* const node,
+                                     const float coord[3],
+                                     int* errorCode);
 
 
 
 
 static
-struct DList* const _octreeNodeBoundingSphere(struct OctreeNode* const node,
-                                              const float center[3],
-                                              float radius);
+struct DList* _octreeNodeBoundingSphere(struct OctreeNode* const node,
+                                        const float center[3],
+                                        float radius);
 
 static
-struct DList* const _octreeNodeAABB(struct OctreeNode* const node,
-                                    const float lower[3],
-                                    const float upper[3]);
+struct DList* _octreeNodeAABB(struct OctreeNode* const node,
+                              const float lower[3],
+                              const float upper[3]);
 
 
 
@@ -126,7 +126,7 @@ struct OctreeNode {
 
 
 
-struct Octree* const octreeNew(const float center[3], const float halfSize[3])
+struct Octree* octreeNew(const float center[3], const float halfSize[3])
 {
     struct Octree* octree = malloc(sizeof(struct Octree));
 
@@ -211,7 +211,7 @@ bool octreeIsPointWithin(struct Octree* const octree, const float coord[3])
 
 
 
-struct DList* const octreeBoundingSphere(struct Octree* const octree,
+struct DList* octreeBoundingSphere(struct Octree* const octree,
                                    const float center[3], float radius)
 {
     assert(octree != NULL);
@@ -232,9 +232,9 @@ struct DList* const octreeBoundingSphere(struct Octree* const octree,
 
 
 
-struct DList* const octreeAABBCenterSize(struct Octree* const octree,
-                                         const float center[3],
-                                         const float halfSize[3])
+struct DList* octreeAABBCenterSize(struct Octree* const octree,
+                                   const float center[3],
+                                   const float halfSize[3])
 {
     assert(octree != NULL);
 
@@ -251,9 +251,9 @@ struct DList* const octreeAABBCenterSize(struct Octree* const octree,
 
 
 
-struct DList* const octreeAABBLowerUpper(struct Octree* const octree,
-                                         const float lower[3],
-                                         const float upper[3])
+struct DList* octreeAABBLowerUpper(struct Octree* const octree,
+                                   const float lower[3],
+                                   const float upper[3])
 {
     assert(octree != NULL);
 
@@ -288,7 +288,8 @@ struct DList* const octreeAABBLowerUpper(struct Octree* const octree,
 
 
 
-struct OctreeNode* const _octreeNodeNewLeaf(const float center[3], const float halfSize[3])
+struct OctreeNode* _octreeNodeNewLeaf(const float center[3],
+                                      const float halfSize[3])
 {
     struct OctreeNode* node = malloc(sizeof(struct OctreeNode));
 
@@ -310,7 +311,8 @@ struct OctreeNode* const _octreeNodeNewLeaf(const float center[3], const float h
 
 
 
-struct OctreeNode* const _octreeNodeNewInterior(const float center[3], const float halfSize[3])
+struct OctreeNode* _octreeNodeNewInterior(const float center[3],
+                                          const float halfSize[3])
 {
     struct OctreeNode* node = malloc(sizeof(struct OctreeNode));
 
@@ -352,9 +354,9 @@ void _octreeNodeDelete(struct OctreeNode* node)
 
 
 static
-struct OctreeNode* const _octreeNodeInsert(struct OctreeNode* const node,
-                                       const float coord[3],
-                                       void* data)
+struct OctreeNode* _octreeNodeInsert(struct OctreeNode* const node,
+                                     const float coord[3],
+                                     void* data)
 {
     // Insert data into leaf node.
     if (node->leaf) {
@@ -428,9 +430,9 @@ struct OctreeNode* const _octreeNodeInsert(struct OctreeNode* const node,
 
 
 static
-struct OctreeNode* const _octreeNodeRemove(struct OctreeNode* const node,
-                                           const float coord[3],
-                                           int* errorCode)
+struct OctreeNode* _octreeNodeRemove(struct OctreeNode* const node,
+                                     const float coord[3],
+                                     int* errorCode)
 {
     // Initialize error code to success.
     *errorCode = 0;
@@ -511,9 +513,9 @@ struct OctreeNode* const _octreeNodeRemove(struct OctreeNode* const node,
 
 
 static
-struct DList* const _octreeNodeBoundingSphere(struct OctreeNode* const node,
-                                              const float center[3],
-                                              float radius)
+struct DList* _octreeNodeBoundingSphere(struct OctreeNode* const node,
+                                        const float center[3],
+                                        float radius)
 {
     struct DList* results = dlistNew();
 
@@ -560,9 +562,9 @@ struct DList* const _octreeNodeBoundingSphere(struct OctreeNode* const node,
 
 
 static
-struct DList* const _octreeNodeAABB(struct OctreeNode* const node,
-                                    const float lower[3],
-                                    const float upper[3])
+struct DList* _octreeNodeAABB(struct OctreeNode* const node,
+                              const float lower[3],
+                              const float upper[3])
 {
     assert(node != NULL);
 
@@ -639,7 +641,7 @@ void _subCenter(const struct OctreeNode* const node, size_t idx, float center[3]
 
     // Debug checks.
     assert(node != NULL);
-    assert(0 <= idx && idx <= 7);
+    assert(idx <= 7);
 
     // Choose octant.
     switch (idx) {
@@ -713,16 +715,3 @@ size_t _AABBOctants(const float center[3],
 
     return numElements;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

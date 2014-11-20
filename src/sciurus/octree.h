@@ -17,7 +17,7 @@ struct Octree;
 
 
 
-struct Octree* const octreeNew(const float center[3], const float halfSize[3]);
+struct Octree* octreeNew(const float center[3], const float halfSize[3]);
 
 void octreeDelete(struct Octree* octree);
 
@@ -25,7 +25,7 @@ void octreeDelete(struct Octree* octree);
 
 
 int octreeInsert(struct Octree* const octree,
-                  const float coord[3], void* data);
+                 const float coord[3], void* data);
 
 int octreeRemove(struct Octree* const octree, const float coord[3]);
 
@@ -34,16 +34,16 @@ int octreeRemove(struct Octree* const octree, const float coord[3]);
 
 bool octreeIsPointWithin(struct Octree* const octree, const float coord[3]);
 
-struct DList* const octreeBoundingSphere(struct Octree* const octree,
+struct DList* octreeBoundingSphere(struct Octree* const octree,
                                    const float center[3], float radius);
 
-struct DList* const octreeAABBCenterSize(struct Octree* const octree,
-                                         const float center[3],
-                                         const float halfSize[3]);
+struct DList* octreeAABBCenterSize(struct Octree* const octree,
+                                   const float center[3],
+                                   const float halfSize[3]);
 
-struct DList* const octreeAABBLowerUpper(struct Octree* const octree,
-                                         const float lower[3],
-                                         const float upper[3]);
+struct DList* octreeAABBLowerUpper(struct Octree* const octree,
+                                   const float lower[3],
+                                   const float upper[3]);
 
 
 
