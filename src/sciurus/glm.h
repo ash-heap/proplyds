@@ -4,6 +4,11 @@
 #include <stdbool.h>
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 
 
 // Trigonometry
@@ -407,6 +412,10 @@ void glmMatixVectorMult3fr_(const float x[3][3], float y[3]);
 
 
 
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif
