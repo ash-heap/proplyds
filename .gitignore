@@ -35,6 +35,7 @@ bin64
 *.pdf
 bin
 main
+treedemo
 
 # Media
 media
