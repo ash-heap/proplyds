@@ -16,7 +16,7 @@ MAIN_OBJECTS=$(OMAIN:%=$(OBJDIR)/%)
 
 OTREEDEMO=treedemo.o gl1util.o scenenode.o heightmap.o sciurus/sciurus.o \
           sciurus/window.o sciurus/keyboard.o sciurus/glm.o sciurus/dlist.o \
-          sciurus/octree.o sciurus/random.o
+          sciurus/octree.o sciurus/random.o sciurus/pointcloud.o
 TREEDEMO_OBJECTS=$(OTREEDEMO:%=$(OBJDIR)/%)
 
 OUTPUTS=$(BINS:%=$(BINDIR)/%)

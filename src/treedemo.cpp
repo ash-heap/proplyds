@@ -1,68 +1,86 @@
+#include <sciurus/random.h>
+#include <sciurus/pointcloud.h>
 #include <sciurus/dlist.h>
 #include <sciurus/octree.h>
+#include <cstring>
 #include <cstdlib>
 #include <cstdio>
 #include <iostream>
 
 
 
+
 int main(int argc, char** argv)
 {
 
-    char point1S[] = "1.0, 1.0, 1.0";
-    float point1C[3] = {1.0f, 1.0f, 1.0f};
+    unsigned int time;
 
-    char point2S[] = "-2.0, 1.0, 1.0";
-    float point2C[3] = {-2.0f, 1.0f, 1.0f};
+    // Make pointcloud.
+    float radius[3]  = {2.0f, 2.0f, 2.0f};
+    size_t numPoints = 10000000;
+    float (*coords)[3] = (float (*)[3])malloc(numPoints*3*sizeof(float));
+    pointcloudEllipsoid(radius, numPoints, coords);
 
-    char point3S[] = "2.0, 2.0, 2.0";
-    float point3C[3] = {2.0f, 2.0f, 2.0f};
-
-    char point4S[] = "-1.0, 1.0, -1.0";
-    float point4C[3] = {-1.0f, 1.0f, -1.0f};
-
-    char point5S[] = "3.0f, 3.0f, -3.0f";
-    float point5C[3] = {3.0f, 3.0f, -3.0f};
-
-
+    // Make octree.
     float octreeCenter[3] = {0.0f, 0.0f, 0.0f};
     float octreeHalfSize[3] = {3.0f, 3.0f, 3.0f};
-
-    printf("Make octree.\n");
     struct Octree* octree = octreeNew(octreeCenter, octreeHalfSize);
 
-    int err;
-    printf("Insert Points.\n");
-    err = octreeInsert(octree, point1C, point1S);
-    printf("error code = %d\n", err);
-    err = octreeInsert(octree, point2C, point2S);
-    printf("error code = %d\n", err);
-    err = octreeInsert(octree, point3C, point3S);
-    printf("error code = %d\n", err);
-    err = octreeInsert(octree, point4C, point4S);
-    printf("error code = %d\n", err);
-    err = octreeInsert(octree, point5C, point5S);
-    printf("error code = %d\n", err);
-
-    err = octreeInsert(octree, point5C, point5S);
-    printf("error code = %d\n", err);
-
-    printf("Test bounding box.\n");
-    struct DList* dlist;
-
-    float sphereCenter[3] = {0.0f, 0.0f, 0.0f};
-    float sphereRadius = 3.47f;
-    dlist = octreeBoundingSphere(octree, sphereCenter, sphereRadius);
-
-    struct DListNode* node = dlistHead(dlist);
-    while (node != NULL) {
-        char* tmp = (char*)dlistNodeData(node);
-        printf("%s\n", tmp);
-        node = dlistNodeNext(node);
+    // Insert points into octree.
+    for (size_t i = 0; i < numPoints; ++i) {
+        octreeInsert(octree, coords[i], coords[i]);
     }
 
-    printf("Delete octree.\n");
-    octreeDelete(octree);
+    time = clock();
+    struct DList* dlist;
 
+    float bboxCenter[3] = {0.0f, 0.0f, 0.0f};
+    float bboxHalfSize[3] = {0.5f, 0.5f, 0.5f};
+    dlist = octreeAABBCenterSize(octree, bboxCenter, bboxHalfSize);
+
+    // float sphereCenter[3] = {0.0f, 0.0f, 0.0f};
+    // float sphereRadius = 0.5f;
+    // dlist = octreeBoundingSphere(octree, sphereCenter, sphereRadius);
+
+    time = clock() - time;
+    printf("Octree Ticks: %d\n", time);
+
+    time = clock();
+    float (*v)[3] = (float (*)[3])malloc(numPoints*3*sizeof(float));
+    float lower[3] = {-0.5f, -0.5f, -0.5f};
+    float upper[3] = { 0.5f,  0.5f,  0.5f};
+    bool a[3];
+    bool b[3];
+    size_t idx = 0;
+    for (size_t i = 0; i < numPoints; ++i) {
+
+        // Check if point is within bounding box.
+        glmGreaterThanEqual3fv(a, coords[i], lower);
+        glmLessThanEqual3fv(b, coords[i], upper);
+        glmAnd3v_(a, b);
+
+        // If it is add it to the results.
+        if (glmAll3(a))
+            memcpy(v[idx], coords[i], 3*sizeof(float));
+
+    }
+
+
+    time = clock() - time;
+    printf("Vector Ticks: %d\n", time);
+
+    // struct DListNode* node = dlistHead(dlist);
+    // while (node != NULL) {
+    //     float *coord = (float*)dlistNodeData(node);
+    //     printf("%0.6f,  %0.6f,  %0.6f\n", coord[0], coord[1], coord[2]);
+    //     node = dlistNodeNext(node);
+    // }
+
+    // for (size_t i = 0; i < numPoints; ++i)
+    //     printf("%0.6f,  %0.6f,  %0.6f\n", coords[i][0], coords[i][1], coords[i][2]);
+
+    octreeDelete(octree);
+    free(coords);
+    free(v);
     exit(EXIT_SUCCESS);
 }
