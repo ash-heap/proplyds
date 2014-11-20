@@ -191,13 +191,13 @@ void glmStep3fv(float out[3], const float x[3], const float edge[3]);
 void glmStep3fv_(float x[3], const float edge[3]);
 
 
-void glmSmoothStep3fs(float out[3], const float x[3], float edge0, float edge1);
-void glmSmoothStep3fs_(float x[3], float edge0, float edge1);
-
-
-void glmSmoothStep3fv(float out[3], const float x[3], 
-                      const float edge0[3], const float edge1[3]);
-void glmSmoothStep3fv_(float x[3], const float edge0[3], const float edge1[3]);
+// void glmSmoothStep3fs(float out[3], const float x[3], float edge0, float edge1);
+// void glmSmoothStep3fs_(float x[3], float edge0, float edge1);
+//
+//
+// void glmSmoothStep3fv(float out[3], const float x[3], 
+//                       const float edge0[3], const float edge1[3]);
+// void glmSmoothStep3fv_(float x[3], const float edge0[3], const float edge1[3]);
 
 
 //------------------------------------------------------------------------------
@@ -226,17 +226,17 @@ void glmNormalize3f(float out[3], const float x[3]);
 void glmNormalize3f_(float x[3]);
 
 
-void glmFaceForward3f(float out[3], const float n[3],
-                      const float i[3], const float nRef[3]);
-void glmFaceForward3f_(const float n[3], const float i[3], const float nRef[3]);
-
-
-void glmReflect3f(float out[3], const float i[3], const float n[3]);
-void glmReflect3f_(float i[3], const float n[3]);
-
-
-void glmRefract3f(float out[3], const float i[3], const float n[3], float eta);
-void glmRefract3f_(float i[3], const float n[3], float eta);
+// void glmFaceForward3f(float out[3], const float n[3],
+//                       const float i[3], const float nRef[3]);
+// void glmFaceForward3f_(const float n[3], const float i[3], const float nRef[3]);
+//
+//
+// void glmReflect3f(float out[3], const float i[3], const float n[3]);
+// void glmReflect3f_(float i[3], const float n[3]);
+//
+//
+// void glmRefract3f(float out[3], const float i[3], const float n[3], float eta);
+// void glmRefract3f_(float i[3], const float n[3], float eta);
 
 
 //------------------------------------------------------------------------------
@@ -372,32 +372,32 @@ void glmDiv3fv_(float x[3], const float y[3]);
 //------------------------------------------------------------------------------
 
 
-void glmMatrixSet3fc(float m[3][3], float x[3], float y[3], float z[3]);
-void glmMatrixSet3fr(float m[3][3], float x[3], float y[3], float z[3]);
-void glmMatrixCopy3f(float mDest[3][3], const float mSource[3][3]);
-
-
-void glmMatixCompMult3f(float out[3][3],
-                        const float x[3][3], const float y[3][3]);
-void glmMatixCompMult3f_(float x[3][3], const float y[3][3]);
-
-
-void glmMatixMatrixMult3fc(float out[3][3],
-                           const float x[3][3], const float y[3][3]);
-void glmMatixMatrixMult3fc_(float x[3][3], const float y[3][3]);
-
-
-void glmMatixMatrixMult3fr(float out[3][3],
-                           const float x[3][3], const float y[3][3]);
-void glmMatixMatrixMult3fr_(float x[3][3], const float y[3][3]);
-
-
-void glmMatixVectorMult3fc(float out[3], const float m[3][3], const float v[3]);
-void glmMatixVectorMult3fc_(const float x[3][3], float y[3]);
-
-
-void glmMatixVectorMult3fr(float out[3], const float m[3][3], const float v[3]);
-void glmMatixVectorMult3fr_(const float x[3][3], float y[3]);
+// void glmMatrixSet3fc(float m[3][3], float x[3], float y[3], float z[3]);
+// void glmMatrixSet3fr(float m[3][3], float x[3], float y[3], float z[3]);
+// void glmMatrixCopy3f(float mDest[3][3], const float mSource[3][3]);
+//
+//
+// void glmMatixCompMult3f(float out[3][3],
+//                         const float x[3][3], const float y[3][3]);
+// void glmMatixCompMult3f_(float x[3][3], const float y[3][3]);
+//
+//
+// void glmMatixMatrixMult3fc(float out[3][3],
+//                            const float x[3][3], const float y[3][3]);
+// void glmMatixMatrixMult3fc_(float x[3][3], const float y[3][3]);
+//
+//
+// void glmMatixMatrixMult3fr(float out[3][3],
+//                            const float x[3][3], const float y[3][3]);
+// void glmMatixMatrixMult3fr_(float x[3][3], const float y[3][3]);
+//
+//
+// void glmMatixVectorMult3fc(float out[3], const float m[3][3], const float v[3]);
+// void glmMatixVectorMult3fc_(const float x[3][3], float y[3]);
+//
+//
+// void glmMatixVectorMult3fr(float out[3], const float m[3][3], const float v[3]);
+// void glmMatixVectorMult3fr_(const float x[3][3], float y[3]);
 
 
 //------------------------------------------------------------------------------

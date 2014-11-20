@@ -649,35 +649,36 @@ void glmStep3fv_(float x[3], const float edge[3])
 
 
 
-void glmSmoothStep3fs(float out[3], const float x[3], float edge0, float edge1)
-{
-    printf("Function \"glmSmoothStep3fs\" has not yet been implemented.\n");
-    exit(EXIT_FAILURE);
-}
-
-
-void glmSmoothStep3fs_(float x[3], float edge0, float edge1)
-{
-    printf("Function \"glmSmoothStep3fs_\" has not yet been implemented.\n");
-    exit(EXIT_FAILURE);
-}
-
-
-
-
-void glmSmoothStep3fv(float out[3], const float x[3], 
-                      const float edge0[3], const float edge1[3])
-{
-    printf("Function \"glmSmoothStep3fv\" has not yet been implemented.\n");
-    exit(EXIT_FAILURE);
-}
-
-
-void glmSmoothStep3fv_(float x[3], const float edge0[3], const float edge1[3])
-{
-    printf("Function \"glmSmoothStep3fv_\" has not yet been implemented.\n");
-    exit(EXIT_FAILURE);
-}
+/* void glmSmoothStep3fs(float out[3], const float x[3], float edge0, float edge1) */
+/* { */
+/*     printf("Function \"glmSmoothStep3fs\" has not yet been implemented.\n"); */
+/*     exit(EXIT_FAILURE); */
+/* } */
+/*  */
+/*  */
+/* void glmSmoothStep3fs_(float x[3], float edge0, float edge1) */
+/* { */
+/*     printf("Function \"glmSmoothStep3fs_\" has not yet been implemented.\n"); */
+/*     glmStep3fs_(x, edge0, edge1); */
+/*     exit(EXIT_FAILURE); */
+/* } */
+/*  */
+/*  */
+/*  */
+/*  */
+/* void glmSmoothStep3fv(float out[3], const float x[3],  */
+/*                       const float edge0[3], const float edge1[3]) */
+/* { */
+/*     printf("Function \"glmSmoothStep3fv\" has not yet been implemented.\n"); */
+/*     exit(EXIT_FAILURE); */
+/* } */
+/*  */
+/*  */
+/* void glmSmoothStep3fv_(float x[3], const float edge0[3], const float edge1[3]) */
+/* { */
+/*     printf("Function \"glmSmoothStep3fv_\" has not yet been implemented.\n"); */
+/*     exit(EXIT_FAILURE); */
+/* } */
 
 
 //------------------------------------------------------------------------------
@@ -751,51 +752,51 @@ void glmNormalize3f_(float x[3])
 
 
 
-void glmFaceForward3f(float out[3], const float n[3],
-                      const float i[3], const float nRef[3])
-{
-    printf("Function \"glmFaceForward3f\" has not yet been implemented.\n");
-    exit(EXIT_FAILURE);
-}
-
-
-void glmFaceForward3f_(const float n[3], const float i[3], const float nRef[3])
-{
-    printf("Function \"glmFaceForward3f_\" has not yet been implemented.\n");
-    exit(EXIT_FAILURE);
-}
-
-
-
-
-void glmReflect3f(float out[3], const float i[3], const float n[3])
-{
-    printf("Function \"glmReflect3f\" has not yet been implemented.\n");
-    exit(EXIT_FAILURE);
-}
-
-
-void glmReflect3f_(float i[3], const float n[3])
-{
-    printf("Function \"glmReflect3f_\" has not yet been implemented.\n");
-    exit(EXIT_FAILURE);
-}
-
-
-
-
-void glmRefract3f(float out[3], const float i[3], const float n[3], float eta)
-{
-    printf("Function \"glmRefract3f\" has not yet been implemented.\n");
-    exit(EXIT_FAILURE);
-}
-
-
-void glmRefract3f_(float i[3], const float n[3], float eta)
-{
-    printf("Function \"glmRefract3f_\" has not yet been implemented.\n");
-    exit(EXIT_FAILURE);
-}
+/* void glmFaceForward3f(float out[3], const float n[3], */
+/*                       const float i[3], const float nRef[3]) */
+/* { */
+/*     printf("Function \"glmFaceForward3f\" has not yet been implemented.\n"); */
+/*     exit(EXIT_FAILURE); */
+/* } */
+/*  */
+/*  */
+/* void glmFaceForward3f_(const float n[3], const float i[3], const float nRef[3]) */
+/* { */
+/*     printf("Function \"glmFaceForward3f_\" has not yet been implemented.\n"); */
+/*     exit(EXIT_FAILURE); */
+/* } */
+/*  */
+/*  */
+/*  */
+/*  */
+/* void glmReflect3f(float out[3], const float i[3], const float n[3]) */
+/* { */
+/*     printf("Function \"glmReflect3f\" has not yet been implemented.\n"); */
+/*     exit(EXIT_FAILURE); */
+/* } */
+/*  */
+/*  */
+/* void glmReflect3f_(float i[3], const float n[3]) */
+/* { */
+/*     printf("Function \"glmReflect3f_\" has not yet been implemented.\n"); */
+/*     exit(EXIT_FAILURE); */
+/* } */
+/*  */
+/*  */
+/*  */
+/*  */
+/* void glmRefract3f(float out[3], const float i[3], const float n[3], float eta) */
+/* { */
+/*     printf("Function \"glmRefract3f\" has not yet been implemented.\n"); */
+/*     exit(EXIT_FAILURE); */
+/* } */
+/*  */
+/*  */
+/* void glmRefract3f_(float i[3], const float n[3], float eta) */
+/* { */
+/*     printf("Function \"glmRefract3f_\" has not yet been implemented.\n"); */
+/*     exit(EXIT_FAILURE); */
+/* } */
 
 
 //------------------------------------------------------------------------------
@@ -1199,108 +1200,108 @@ void glmDiv3fv_(float x[3], const float y[3])
 //------------------------------------------------------------------------------
 
 
-void glmMatrixSet3fc(float m[3][3], float x[3], float y[3], float z[3])
-{
-    printf("Function \"glmRefract3f_\" has not yet been implemented.\n");
-    exit(EXIT_FAILURE);
-}
-
-
-void glmMatrixSet3fr(float m[3][3], float x[3], float y[3], float z[3])
-{
-    printf("Function \"glmRefract3f_\" has not yet been implemented.\n");
-    exit(EXIT_FAILURE);
-}
-
-
-void glmMatrixCopy3f(float mDest[3][3], const float mSource[3][3])
-{
-    printf("Function \"glmRefract3f_\" has not yet been implemented.\n");
-    exit(EXIT_FAILURE);
-}
-
-
-
-
-void glmMatixCompMult3f(float out[3][3],
-                        const float x[3][3], const float y[3][3])
-{
-    printf("Function \"glmRefract3f_\" has not yet been implemented.\n");
-    exit(EXIT_FAILURE);
-}
-
-
-void glmMatixCompMult3f_(float x[3][3], const float y[3][3])
-{
-    printf("Function \"glmRefract3f_\" has not yet been implemented.\n");
-    exit(EXIT_FAILURE);
-}
-
-
-
-
-void glmMatixMatrixMult3fc(float out[3][3],
-                           const float x[3][3], const float y[3][3])
-{
-    printf("Function \"glmRefract3f_\" has not yet been implemented.\n");
-    exit(EXIT_FAILURE);
-}
-
-
-void glmMatixMatrixMult3fc_(float x[3][3], const float y[3][3])
-{
-    printf("Function \"glmRefract3f_\" has not yet been implemented.\n");
-    exit(EXIT_FAILURE);
-}
-
-
-
-
-void glmMatixMatrixMult3fr(float out[3][3],
-                           const float x[3][3], const float y[3][3])
-{
-    printf("Function \"glmRefract3f_\" has not yet been implemented.\n");
-    exit(EXIT_FAILURE);
-}
-
-
-void glmMatixMatrixMult3fr_(float x[3][3], const float y[3][3])
-{
-    printf("Function \"glmRefract3f_\" has not yet been implemented.\n");
-    exit(EXIT_FAILURE);
-}
-
-
-
-
-void glmMatixVectorMult3fc(float out[3], const float m[3][3], const float v[3])
-{
-    printf("Function \"glmRefract3f_\" has not yet been implemented.\n");
-    exit(EXIT_FAILURE);
-}
-
-
-void glmMatixVectorMult3fc_(const float x[3][3], float y[3])
-{
-    printf("Function \"glmRefract3f_\" has not yet been implemented.\n");
-    exit(EXIT_FAILURE);
-}
-
-
-
-
-void glmMatixVectorMult3fr(float out[3], const float m[3][3], const float v[3])
-{
-    printf("Function \"glmRefract3f_\" has not yet been implemented.\n");
-    exit(EXIT_FAILURE);
-}
-
-
-void glmMatixVectorMult3fr_(const float x[3][3], float y[3])
-{
-    printf("Function \"glmRefract3f_\" has not yet been implemented.\n");
-    exit(EXIT_FAILURE);
-}
+/* void glmMatrixSet3fc(float m[3][3], float x[3], float y[3], float z[3]) */
+/* { */
+/*     printf("Function \"glmRefract3f_\" has not yet been implemented.\n"); */
+/*     exit(EXIT_FAILURE); */
+/* } */
+/*  */
+/*  */
+/* void glmMatrixSet3fr(float m[3][3], float x[3], float y[3], float z[3]) */
+/* { */
+/*     printf("Function \"glmRefract3f_\" has not yet been implemented.\n"); */
+/*     exit(EXIT_FAILURE); */
+/* } */
+/*  */
+/*  */
+/* void glmMatrixCopy3f(float mDest[3][3], const float mSource[3][3]) */
+/* { */
+/*     printf("Function \"glmRefract3f_\" has not yet been implemented.\n"); */
+/*     exit(EXIT_FAILURE); */
+/* } */
+/*  */
+/*  */
+/*  */
+/*  */
+/* void glmMatixCompMult3f(float out[3][3], */
+/*                         const float x[3][3], const float y[3][3]) */
+/* { */
+/*     printf("Function \"glmRefract3f_\" has not yet been implemented.\n"); */
+/*     exit(EXIT_FAILURE); */
+/* } */
+/*  */
+/*  */
+/* void glmMatixCompMult3f_(float x[3][3], const float y[3][3]) */
+/* { */
+/*     printf("Function \"glmRefract3f_\" has not yet been implemented.\n"); */
+/*     exit(EXIT_FAILURE); */
+/* } */
+/*  */
+/*  */
+/*  */
+/*  */
+/* void glmMatixMatrixMult3fc(float out[3][3], */
+/*                            const float x[3][3], const float y[3][3]) */
+/* { */
+/*     printf("Function \"glmRefract3f_\" has not yet been implemented.\n"); */
+/*     exit(EXIT_FAILURE); */
+/* } */
+/*  */
+/*  */
+/* void glmMatixMatrixMult3fc_(float x[3][3], const float y[3][3]) */
+/* { */
+/*     printf("Function \"glmRefract3f_\" has not yet been implemented.\n"); */
+/*     exit(EXIT_FAILURE); */
+/* } */
+/*  */
+/*  */
+/*  */
+/*  */
+/* void glmMatixMatrixMult3fr(float out[3][3], */
+/*                            const float x[3][3], const float y[3][3]) */
+/* { */
+/*     printf("Function \"glmRefract3f_\" has not yet been implemented.\n"); */
+/*     exit(EXIT_FAILURE); */
+/* } */
+/*  */
+/*  */
+/* void glmMatixMatrixMult3fr_(float x[3][3], const float y[3][3]) */
+/* { */
+/*     printf("Function \"glmRefract3f_\" has not yet been implemented.\n"); */
+/*     exit(EXIT_FAILURE); */
+/* } */
+/*  */
+/*  */
+/*  */
+/*  */
+/* void glmMatixVectorMult3fc(float out[3], const float m[3][3], const float v[3]) */
+/* { */
+/*     printf("Function \"glmRefract3f_\" has not yet been implemented.\n"); */
+/*     exit(EXIT_FAILURE); */
+/* } */
+/*  */
+/*  */
+/* void glmMatixVectorMult3fc_(const float x[3][3], float y[3]) */
+/* { */
+/*     printf("Function \"glmRefract3f_\" has not yet been implemented.\n"); */
+/*     exit(EXIT_FAILURE); */
+/* } */
+/*  */
+/*  */
+/*  */
+/*  */
+/* void glmMatixVectorMult3fr(float out[3], const float m[3][3], const float v[3]) */
+/* { */
+/*     printf("Function \"glmRefract3f_\" has not yet been implemented.\n"); */
+/*     exit(EXIT_FAILURE); */
+/* } */
+/*  */
+/*  */
+/* void glmMatixVectorMult3fr_(const float x[3][3], float y[3]) */
+/* { */
+/*     printf("Function \"glmRefract3f_\" has not yet been implemented.\n"); */
+/*     exit(EXIT_FAILURE); */
+/* } */
 
 
 //------------------------------------------------------------------------------
