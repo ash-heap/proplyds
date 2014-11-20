@@ -460,7 +460,7 @@ struct OctreeNode* const _octreeNodeRemove(struct OctreeNode* const node,
                 } else {
 
                     // Move data pointer at end to removed pointer spot.
-                    node->data[i] == node->data[--(node->numPoints)];
+                    node->data[i] = node->data[--(node->numPoints)];
                     node->data[node->numPoints] = NULL;
 
                     // Copy coordinate from end to removed spot.
