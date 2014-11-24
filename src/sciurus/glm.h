@@ -149,12 +149,18 @@ void glmMod3fv(float out[3], const float x[3], const float y[3]);
 void glmMod3fv_(float x[3], const float y[3]);
 
 
+float glmMinimum3f(float x[3]);
+
+
 void glmMin3fs(float out[3], const float x[3], float y);
 void glmMin3fs_(float x[3], float y);
 
 
 void glmMin3fv(float out[3], const float x[3], const float y[3]);
 void glmMin3fv_(float x[3], const float y[3]);
+
+
+float glmMaximum3f(float x[3]);
 
 
 void glmMax3fs(float out[3], const float x[3], float y);
