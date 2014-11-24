@@ -3,11 +3,23 @@
 
 #include "dlist.h"
 #include <stdbool.h>
+#include <stdlib.h>
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+
+
+#define octreeMINUS_X 1
+#define octreePLUS_X  2
+#define octreeMINUS_Y 4
+#define octreePLUS_Y  8
+#define octreeMINUS_Z 16
+#define octreePLUS_Z  32
+
 
 
 
@@ -32,18 +44,45 @@ int octreeRemove(struct Octree* const octree, const float coord[3]);
 
 
 
-bool octreeIsPointWithin(struct Octree* const octree, const float coord[3]);
+bool octreeIsPointWithin(const struct Octree* const octree, const float coord[3]);
 
-struct DList* octreeBoundingSphere(struct Octree* const octree,
-                                   const float center[3], float radius);
+void octreeBoundingSphere(struct Octree* const octree,
+                          const float center[3], float radius,
+                          struct DList* results);
 
-struct DList* octreeAABBCenterSize(struct Octree* const octree,
-                                   const float center[3],
-                                   const float halfSize[3]);
+void octreeAABBCenterSize(struct Octree* const octree,
+                          const float center[3],
+                          const float halfSize[3],
+                          struct DList* results);
 
-struct DList* octreeAABBLowerUpper(struct Octree* const octree,
-                                   const float lower[3],
-                                   const float upper[3]);
+void octreeAABBLowerUpper(struct Octree* const octree,
+                          const float lower[3],
+                          const float upper[3],
+                          struct DList* results);
+
+
+
+
+int octreeCoordAddress(const struct Octree* const octree,
+                       const float coord[3],
+                       size_t maxDepth,
+                       size_t* depth,
+                       unsigned char address[]);
+
+void octreeNeighborAddress(unsigned char direction,
+                           size_t depth,
+                           unsigned char result[],
+                           const unsigned char address[]);
+
+void octreeAddressBox(const struct Octree* const octree,
+                      size_t depth, const unsigned char address[],
+                      float center[3], float halfSize[3]);
+
+void octreeAddressLookup(const struct Octree* const octree,
+                         size_t depth,
+                         const unsigned char address[],
+                         struct DList* const coords,
+                         struct DList* const data);
 
 
 

@@ -12,7 +12,7 @@
 
 int main(int argc, char** argv)
 {
-
+    int errCode;
     unsigned int time;
 
     // Make pointcloud.
@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 
     // Make octree.
     float octreeCenter[3] = {0.0f, 0.0f, 0.0f};
-    float octreeHalfSize[3] = {3.0f, 3.0f, 3.0f};
+    float octreeHalfSize[3] = {2.0f, 2.0f, 2.0f};
     struct Octree* octree = octreeNew(octreeCenter, octreeHalfSize);
 
     // Insert points into octree.
@@ -32,15 +32,16 @@ int main(int argc, char** argv)
     }
 
     time = clock();
-    struct DList* dlist;
+
+    struct DList* dlist = dlistNew();
 
     float bboxCenter[3] = {0.0f, 0.0f, 0.0f};
     float bboxHalfSize[3] = {0.5f, 0.5f, 0.5f};
-    dlist = octreeAABBCenterSize(octree, bboxCenter, bboxHalfSize);
+    octreeAABBCenterSize(octree, bboxCenter, bboxHalfSize, dlist);
 
     // float sphereCenter[3] = {0.0f, 0.0f, 0.0f};
     // float sphereRadius = 0.5f;
-    // dlist = octreeBoundingSphere(octree, sphereCenter, sphereRadius);
+    // octreeBoundingSphere(octree, sphereCenter, sphereRadius, dlist);
 
     time = clock() - time;
     printf("Octree Ticks: %d\n", time);
@@ -68,6 +69,39 @@ int main(int argc, char** argv)
 
     time = clock() - time;
     printf("Vector Ticks: %d\n", time);
+
+    float testVec[3] = {0.3, -1.33, 0.84241};
+    const size_t maxDepth = 100;
+    unsigned char address[100];
+    size_t depth = 0;
+    if ((errCode = octreeCoordAddress(octree, testVec, maxDepth, &depth, address))) {
+        printf("octreeCoordAddress Error Code = %d\n", errCode);
+        exit(EXIT_FAILURE);
+    }
+
+    printf("Coord = %0.6f, %0.6f, %0.6f\n", testVec[0], testVec[1], testVec[2]);
+    printf("Address = ");
+    for (size_t i = 0; i < depth; ++i) {
+        printf("%d ", address[i]);
+    }
+    printf("\n");
+    
+    unsigned char resultAddress[100];
+    octreeNeighborAddress(octreePLUS_X | octreePLUS_Y | octreeMINUS_Z, depth, resultAddress, address);
+    printf("Result  = ");
+    for (size_t i = 0; i < depth; ++i) {
+        printf("%d ", resultAddress[i]);
+    }
+    printf("\n");
+
+    struct DList* resultCoords = dlistNew();
+    octreeAddressLookup(octree, depth, resultAddress, resultCoords, NULL);
+    struct DListNode* node = dlistHead(resultCoords);
+    while (node != NULL) {
+        float *coord = (float*)dlistNodeData(node);
+        printf("%0.6f,  %0.6f,  %0.6f\n", coord[0], coord[1], coord[2]);
+        node = dlistNodeNext(node);
+    }
 
     // struct DListNode* node = dlistHead(dlist);
     // while (node != NULL) {

@@ -45,25 +45,39 @@ struct OctreeNode* _octreeNodeRemove(struct OctreeNode* const node,
 
 
 static
-struct DList* _octreeNodeBoundingSphere(struct OctreeNode* const node,
-                                        const float center[3],
-                                        float radius);
+void _octreeNodeBoundingSphere(struct OctreeNode* const node,
+                               const float center[3],
+                               float radius,
+                               struct DList* results);
 
 static
-struct DList* _octreeNodeAABB(struct OctreeNode* const node,
-                              const float lower[3],
-                              const float upper[3]);
+void _octreeNodeAABB(struct OctreeNode* const node,
+                     const float lower[3],
+                     const float upper[3],
+                     struct DList* results);
 
 
 
 
 static
-void _subCenter(const struct OctreeNode* const node,
-                size_t idx, float center[3]);
+void _octreeNodeCoordAddress(const struct OctreeNode* const node,
+                             const float coord[3],
+                             size_t maxDepth,
+                             size_t* depth,
+                             unsigned char address[]);
+
+static
+void _octreeNodeGetAll(const struct OctreeNode* node,
+                       struct DList* const coords,
+                       struct DList* const data);
 
 static
 bool _isBoxInSphere(float const boxCenter[3], float const boxHalfSize[3],
                     float const sphereCenter[3], float sphereRadius);
+
+static
+void _subCenter(const struct OctreeNode* const node,
+                size_t idx, float center[3]);
 
 static
 size_t _AABBOctants(const float center[3],
@@ -198,7 +212,7 @@ int octreeRemove(struct Octree* const octree, const float coord[3])
 
 
 
-bool octreeIsPointWithin(struct Octree* const octree, const float coord[3])
+bool octreeIsPointWithin(const struct Octree* const octree, const float coord[3])
 {
     float v[3];
     bool b[3];
@@ -211,30 +225,32 @@ bool octreeIsPointWithin(struct Octree* const octree, const float coord[3])
 
 
 
-struct DList* octreeBoundingSphere(struct Octree* const octree,
-                                   const float center[3], float radius)
+void octreeBoundingSphere(struct Octree* const octree,
+                          const float center[3], float radius,
+                          struct DList* results)
 {
     assert(octree != NULL);
 
-    // If root is NULL return empty list.
+    // If root is NULL do nothing.
     struct OctreeNode* root = octree->root;
     if (root == NULL)
-        return dlistNew();
+        return;
 
     // Check that sphere overlaps with octree.
     if (!_isBoxInSphere(root->center, root->halfSize, center, radius))
-        return dlistNew();
+        return;
 
     // Apply bounding sphere to the octree.
-    return _octreeNodeBoundingSphere(root, center, radius);
+    _octreeNodeBoundingSphere(root, center, radius, results);
 }
 
 
 
 
-struct DList* octreeAABBCenterSize(struct Octree* const octree,
-                                   const float center[3],
-                                   const float halfSize[3])
+void octreeAABBCenterSize(struct Octree* const octree,
+                          const float center[3],
+                          const float halfSize[3],
+                          struct DList* results)
 {
     assert(octree != NULL);
 
@@ -245,21 +261,22 @@ struct DList* octreeAABBCenterSize(struct Octree* const octree,
     glmAdd3fv(upper, center, halfSize);
 
     // Call the lower/upper bounding box function.
-    return octreeAABBLowerUpper(octree, lower, upper);
+    octreeAABBLowerUpper(octree, lower, upper, results);
 }
 
 
 
 
-struct DList* octreeAABBLowerUpper(struct Octree* const octree,
-                                   const float lower[3],
-                                   const float upper[3])
+void octreeAABBLowerUpper(struct Octree* const octree,
+                          const float lower[3],
+                          const float upper[3],
+                          struct DList* results)
 {
     assert(octree != NULL);
 
     // Check root for NULL.
     if (octree->root == NULL)
-        return dlistNew();
+        return;
 
     // Convert octree bounds to lower/upper.
     float _lower[3];
@@ -272,13 +289,235 @@ struct DList* octreeAABBLowerUpper(struct Octree* const octree,
     glmStep3fv_(_upper, lower);
     bool noCollision = 0.0f == glmDot3f(_lower, _upper);
 
-    // If no collision return empty list.
+    // If no collision simply return.
     if (noCollision)
-        return dlistNew();
+        return;
 
     // Otherwise, call the bounding box function on the root node.
     // NOTE: The internal version assumes the check above has passed.
-    return _octreeNodeAABB(octree->root, lower, upper);
+    _octreeNodeAABB(octree->root, lower, upper, results);
+}
+
+
+
+
+int octreeCoordAddress(const struct Octree* const octree,
+                       const float coord[3],
+                       size_t maxDepth,
+                       size_t* depth,
+                       unsigned char address[maxDepth])
+{
+    assert(octree != NULL);
+
+    // Check to make sure point is within the octree.
+    if (!octreeIsPointWithin(octree, coord))
+        return -1;
+
+    // Check root for NULL.
+    if (octree->root == NULL)
+        return -2;
+
+    // Find address of coordinate (coord does not need to be in the tree).
+    _octreeNodeCoordAddress(octree->root, coord, maxDepth, depth, address);
+
+    return 0;
+}
+
+
+
+
+// NOTE: result must be at least depth in length
+void octreeNeighborAddress(unsigned char direction,
+                           size_t depth,
+                           unsigned char result[],
+                           const unsigned char address[])
+{
+    // Copy address to the result address.
+    memcpy(result, address, depth*sizeof(unsigned char));
+
+    int idx = depth - 1;;
+    while ((direction != 0) && (idx >= 0)) {
+
+        unsigned char newDirection = 0;
+
+        if (direction & octreeMINUS_X) {
+
+            switch (result[idx]) {
+                case 0: result[idx] = 1; newDirection |= octreeMINUS_X; break;
+                case 1: result[idx] = 0; break;
+                case 2: result[idx] = 3; newDirection |= octreeMINUS_X; break;
+                case 3: result[idx] = 2; break;
+                case 4: result[idx] = 5; newDirection |= octreeMINUS_X; break;
+                case 5: result[idx] = 4; break;
+                case 6: result[idx] = 7; newDirection |= octreeMINUS_X; break;
+                case 7: result[idx] = 6; break;
+            }
+
+        } else if (direction & octreePLUS_X) {
+
+            switch (result[idx]) {
+                case 0: result[idx] = 1; break;
+                case 1: result[idx] = 0; newDirection |= octreePLUS_X; break;
+                case 2: result[idx] = 3; break;
+                case 3: result[idx] = 2; newDirection |= octreePLUS_X; break;
+                case 4: result[idx] = 5; break;
+                case 5: result[idx] = 4; newDirection |= octreePLUS_X; break;
+                case 6: result[idx] = 7; break;
+                case 7: result[idx] = 6; newDirection |= octreePLUS_X; break;
+            }
+
+        }
+
+        if (direction & octreeMINUS_Y) {
+
+            switch (result[idx]) {
+                case 0: result[idx] = 2; newDirection |= octreeMINUS_Y; break;
+                case 1: result[idx] = 3; newDirection |= octreeMINUS_Y; break;
+                case 2: result[idx] = 0; break;
+                case 3: result[idx] = 1; break;
+                case 4: result[idx] = 6; newDirection |= octreeMINUS_Y; break;
+                case 5: result[idx] = 7; newDirection |= octreeMINUS_Y; break;
+                case 6: result[idx] = 4; break;
+                case 7: result[idx] = 5; break;
+            }
+
+        } else if (direction & octreePLUS_Y) {
+
+            switch (result[idx]) {
+                case 0: result[idx] = 2; break;
+                case 1: result[idx] = 3; break;
+                case 2: result[idx] = 0; newDirection |= octreePLUS_Y; break;
+                case 3: result[idx] = 1; newDirection |= octreePLUS_Y; break;
+                case 4: result[idx] = 6; break;
+                case 5: result[idx] = 7; break;
+                case 6: result[idx] = 4; newDirection |= octreePLUS_Y; break;
+                case 7: result[idx] = 5; newDirection |= octreePLUS_Y; break;
+            }
+
+        }
+
+        if (direction & octreeMINUS_Z) {
+
+            switch (result[idx]) {
+                case 0: result[idx] = 4; newDirection |= octreeMINUS_Z; break;
+                case 1: result[idx] = 5; newDirection |= octreeMINUS_Z; break;
+                case 2: result[idx] = 6; newDirection |= octreeMINUS_Z; break;
+                case 3: result[idx] = 7; newDirection |= octreeMINUS_Z; break;
+                case 4: result[idx] = 0; break;
+                case 5: result[idx] = 5; break;
+                case 6: result[idx] = 2; break;
+                case 7: result[idx] = 3; break;
+            }
+
+        } else if (direction & octreePLUS_Z) {
+
+            switch (result[idx]) {
+                case 0: result[idx] = 4; break;
+                case 1: result[idx] = 5; break;
+                case 2: result[idx] = 6; break;
+                case 3: result[idx] = 7; break;
+                case 4: result[idx] = 0; newDirection |= octreeMINUS_Z; break;
+                case 5: result[idx] = 5; newDirection |= octreeMINUS_Z; break;
+                case 6: result[idx] = 2; newDirection |= octreeMINUS_Z; break;
+                case 7: result[idx] = 3; newDirection |= octreeMINUS_Z; break;
+            }
+
+        }
+
+        // Update variables.
+        direction = newDirection;
+        --idx;
+    }
+}
+
+
+
+
+void octreeAddressBox(const struct Octree* const octree,
+                      size_t depth, const unsigned char address[],
+                      float center[3], float halfSize[3])
+{
+    float v[3];
+
+    memcpy(center, octree->center, 3*sizeof(float));
+    memcpy(halfSize, octree->halfSize, 3*sizeof(float));
+
+    for (size_t i = 0; i < depth; ++i) {
+
+        // Calculate new half size.
+        glmDiv3fs_(halfSize, 2.0f);
+
+        // Choose octant.
+        switch (address[i]) {
+            case 0: glmSet3f(v, -1, -1, -1); break;
+            case 1: glmSet3f(v, +1, -1, -1); break;
+            case 2: glmSet3f(v, -1, +1, -1); break;
+            case 3: glmSet3f(v, +1, +1, -1); break;
+            case 4: glmSet3f(v, -1, -1, +1); break;
+            case 5: glmSet3f(v, +1, -1, +1); break;
+            case 6: glmSet3f(v, -1, +1, +1); break;
+            case 7: glmSet3f(v, +1, +1, +1); break;
+        }
+
+        // Calculate new center.
+        glmCompMult3fv_(v, halfSize);
+        glmAdd3fv_(center, v);
+    }
+}
+
+
+
+
+void octreeAddressLookup(const struct Octree* const octree,
+                         size_t depth,
+                         const unsigned char address[],
+                         struct DList* const coords,
+                         struct DList* const data)
+{
+    assert(octree != NULL);
+
+    // Follow address.
+    struct OctreeNode* node = octree->root;
+    for (size_t idx = 0; idx < depth; ++idx) {
+
+        // No data at address.
+        if (node == NULL) {
+            return;
+
+        // Leaf node found, return the addressed data.
+        } else if (node->leaf) {
+
+            // Calculate center and half size of addressed node.
+            float center[3];
+            float halfSize[3];
+            octreeAddressBox(octree, depth, address, center, halfSize);
+
+            // Add points within addressed node to the results.
+            float v[3];
+            bool b[3];
+            for (size_t i = 0; i < node->numPoints; ++i) {
+                glmSub3fv(v, node->coord[i], center);
+                glmAbs3f_(v);
+                glmLessThanEqual3fv(b, v, halfSize);
+                if (glmAll3(b)) {
+                    if (coords != NULL)
+                        dlistCons(coords, node->coord[i]);
+                    if (data != NULL)
+                        dlistCons(data, node->data[i]);
+                }
+            }
+
+            return;
+
+        // Addvance to next depth.
+        } else {
+            node = node->children[address[idx]];
+        }
+
+    }
+
+    // If the address leads to an internal node get all the data.
+    _octreeNodeGetAll(node, coords, data);
 }
 
 
@@ -513,12 +752,11 @@ struct OctreeNode* _octreeNodeRemove(struct OctreeNode* const node,
 
 
 static
-struct DList* _octreeNodeBoundingSphere(struct OctreeNode* const node,
+void _octreeNodeBoundingSphere(struct OctreeNode* const node,
                                         const float center[3],
-                                        float radius)
+                                        float radius,
+                                        struct DList* results)
 {
-    struct DList* results = dlistNew();
-
     if (node->leaf) {
 
         // Look through each point and see if it is within the bounding sphere.
@@ -544,9 +782,7 @@ struct DList* _octreeNodeBoundingSphere(struct OctreeNode* const node,
                                                   center,
                                                   radius);
                 if (boxInSphere) {
-                    struct DList* newList;
-                    newList = _octreeNodeBoundingSphere(child, center, radius);
-                    dlistCat(results, newList);
+                    _octreeNodeBoundingSphere(child, center, radius, results);
                 }
 
             }
@@ -554,21 +790,18 @@ struct DList* _octreeNodeBoundingSphere(struct OctreeNode* const node,
         }
 
     }
-
-    return results;
 }
 
 
 
 
 static
-struct DList* _octreeNodeAABB(struct OctreeNode* const node,
+void _octreeNodeAABB(struct OctreeNode* const node,
                               const float lower[3],
-                              const float upper[3])
+                              const float upper[3],
+                              struct DList* results)
 {
     assert(node != NULL);
-
-    struct DList* results = dlistNew();
 
     // Extract data from leaf node.
     if (node->leaf) {
@@ -601,11 +834,65 @@ struct DList* _octreeNodeAABB(struct OctreeNode* const node,
             struct OctreeNode* child = node->children[indices[i]];
 
             if (child != NULL)
-                dlistCat(results, _octreeNodeAABB(child, lower, upper));
+                _octreeNodeAABB(child, lower, upper, results);
         }
     }
+}
 
-    return results;
+
+
+
+static
+void _octreeNodeCoordAddress(const struct OctreeNode* node,
+                             const float coord[3],
+                             size_t maxDepth,
+                             size_t* depth,
+                             unsigned char address[maxDepth])
+{
+    size_t _depth = 0;
+
+    while (!(node == NULL) && !(node->leaf) && (_depth < maxDepth)) {
+
+        size_t idx = (-(coord[0] >= node->center[0]) & 1)
+                   | (-(coord[1] >= node->center[1]) & 2)
+                   | (-(coord[2] >= node->center[2]) & 4);
+
+        address[_depth++] = idx;
+        node = node->children[idx];
+    }
+
+    *depth = _depth;
+}
+
+
+
+
+static
+void _octreeNodeGetAll(const struct OctreeNode* node,
+                       struct DList* const coords,
+                       struct DList* const data)
+{
+    if (node == NULL)
+        return;
+
+    if (node->leaf) {
+
+        // Get data points.
+        for (size_t i = 0; i < node->numPoints; ++i) {
+            if (coords != NULL)
+                dlistCons(coords, (void*)(node->coord[i]));
+            if (data != NULL)
+                dlistCons(data, node->data[i]);
+        }
+
+    } else {
+
+        // Loop through each child.
+        for (size_t i = 0; i < 8; ++i) {
+            if (node->children[i] != NULL)
+                _octreeNodeGetAll(node->children[i], coords, data);
+        }
+    }
 }
 
 
