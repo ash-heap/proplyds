@@ -60,6 +60,11 @@ void octreeAABBLowerUpper(struct Octree* const octree,
                           const float upper[3],
                           struct DList* results);
 
+int octreeNearestNeighbor(const struct Octree* const octree,
+                          const float point[3],
+                          float coord[3],
+                          void** data);
+
 
 
 
@@ -69,10 +74,10 @@ int octreeCoordAddress(const struct Octree* const octree,
                        size_t* depth,
                        unsigned char address[]);
 
-void octreeNeighborAddress(unsigned char direction,
-                           size_t depth,
-                           unsigned char result[],
-                           const unsigned char address[]);
+int octreeNeighborAddress(unsigned char direction,
+                          size_t depth,
+                          const unsigned char address[],
+                          unsigned char result[]);
 
 void octreeAddressBox(const struct Octree* const octree,
                       size_t depth, const unsigned char address[],

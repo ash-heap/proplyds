@@ -1,6 +1,7 @@
 #include "octree.h"
 #include "dlist.h"
 #include "glm.h"
+#include "math.h"
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
@@ -11,8 +12,51 @@
 
 
 
-// Number points that are allowed to be in a leaf node.  
+
+#ifndef INFINITY
+#define INFINITY +1.0/0.0;
+#endif
+
+
+// Number points that are allowed to be in a leaf node.
 #define OCTREE_MAX_POINTS_PER_NODE 4
+
+// Maximum depth of octree addresses.  If the octree is deeper than this the
+// library may break.
+#define OCTREE_MAX_ADDRESS_DEPTH 64
+
+static
+float NEIGHBOR_DIRECTIONS[] =
+    { octreeMINUS_X
+    , octreePLUS_X
+    , octreeMINUS_Y
+    , octreePLUS_Y
+    , octreeMINUS_Z
+    , octreePLUS_Z
+
+    , octreeMINUS_X | octreeMINUS_Y
+    , octreeMINUS_X | octreePLUS_Y
+    , octreePLUS_X  | octreeMINUS_Y
+    , octreePLUS_X  | octreePLUS_Y
+
+    , octreeMINUS_X | octreeMINUS_Z
+    , octreePLUS_X  | octreeMINUS_Z
+    , octreeMINUS_Y | octreeMINUS_Z
+    , octreePLUS_Y  | octreeMINUS_Z
+    , octreeMINUS_X | octreePLUS_Z
+    , octreePLUS_X  | octreePLUS_Z
+    , octreeMINUS_Y | octreePLUS_Z
+    , octreePLUS_Y  | octreePLUS_Z
+
+    , octreeMINUS_X | octreeMINUS_Y | octreeMINUS_Z
+    , octreeMINUS_X | octreePLUS_Y  | octreeMINUS_Z
+    , octreePLUS_X  | octreeMINUS_Y | octreeMINUS_Z
+    , octreePLUS_X  | octreePLUS_Y  | octreeMINUS_Z
+    , octreeMINUS_X | octreeMINUS_Y | octreePLUS_Z
+    , octreeMINUS_X | octreePLUS_Y  | octreePLUS_Z
+    , octreePLUS_X  | octreeMINUS_Y | octreePLUS_Z
+    , octreePLUS_X  | octreePLUS_Y  | octreePLUS_Z
+    };
 
 
 
@@ -56,6 +100,28 @@ void _octreeNodeAABB(struct OctreeNode* const node,
                      const float upper[3],
                      struct DList* results);
 
+static
+void _closestPoint(const float point[3],
+                   const struct DList* const coordList,
+                   const struct DList* const dataList,
+                   float* distance,
+                   float coord[3], void** data);
+
+static
+int _octreeClosestPoint(const struct Octree* const octree,
+                        const float point[3],
+                        float coord[3],
+                        void** data);
+
+static
+void _octreeClosestPointInAddress(const struct Octree* const octree,
+                                  const float point[3],
+                                  size_t addressDepth,
+                                  const unsigned char address[],
+                                  float* distance,
+                                  float coord[3],
+                                  void** data);
+
 
 
 
@@ -70,6 +136,9 @@ static
 void _octreeNodeGetAll(const struct OctreeNode* node,
                        struct DList* const coords,
                        struct DList* const data);
+
+
+
 
 static
 bool _isBoxInSphere(float const boxCenter[3], float const boxHalfSize[3],
@@ -301,6 +370,93 @@ void octreeAABBLowerUpper(struct Octree* const octree,
 
 
 
+int octreeNearestNeighbor(const struct Octree* const octree,
+                          const float point[3],
+                          float coord[3],
+                          void** data)
+{
+    assert(octree != NULL);
+
+    int errCode = 0;
+
+    if (octree->root == NULL)
+        return -1;
+
+    // Get address in the octree of where this point would be.
+    size_t addressDepth = 0;
+    unsigned char address[OCTREE_MAX_ADDRESS_DEPTH];
+    errCode = octreeCoordAddress(octree,
+                                 point,
+                                 OCTREE_MAX_ADDRESS_DEPTH,
+                                 &addressDepth,
+                                 address);
+    if (errCode)
+        return errCode - 10;
+
+    // Get coordinates of the box at address.
+    float center[3];
+    float halfSize[3];
+    octreeAddressBox(octree, addressDepth, address, center, halfSize);
+
+    // Compute the distance to each edge of the box from the point.
+    // NOTE: The point is guaranteed to be within this box because of the
+    //       address lookup.
+    float sideDistance[3];
+    glmSub3fv(sideDistance, center, point);
+    glmAbs3f_(sideDistance);
+    glmSub3fv(sideDistance, halfSize, sideDistance);
+
+    // Initialize the distance to edge to infinity.
+    float distance = INFINITY;
+
+    // Find closest data point in the same address box.
+    _octreeClosestPointInAddress(octree, point, addressDepth, address,
+                                 &distance, coord, data);
+
+    // If distance is smaller than the distance to the side then simply return
+    // because the nearest neighbor has been found.
+    if (distance <= glmMinimum3f(sideDistance)) {
+        return 0;
+    }
+
+    // Loop through decreasing the depth of the address until the closest point
+    // is found.
+    for (size_t depth = addressDepth; 0 < depth; --depth) {
+
+        // Loop through neighboring nodes.
+        unsigned char neighborAddress[OCTREE_MAX_ADDRESS_DEPTH];
+        for (size_t i = 0; i < 26; ++i) {
+
+            // Get neighbor address.
+            errCode = octreeNeighborAddress(NEIGHBOR_DIRECTIONS[i],
+                                            depth, address, neighborAddress);
+
+            // Find closest data point in the neighboring box.
+            if (errCode == 0)
+                _octreeClosestPointInAddress(octree, point,
+                                             depth, neighborAddress,
+                                             &distance, coord, data);
+        }
+
+        // Update and recheck distance.
+        glmCompMult3fs_(halfSize, 2.0f);
+        glmAdd3fv_(sideDistance, halfSize);
+        if (distance <= glmMinimum3f(sideDistance)) {
+            return 0;
+        }
+    }
+
+    // To this point the closest point has not been found, so look for the
+    // closest point (disregarding size distance) in the entire octree.
+    if (_octreeClosestPoint(octree, point, coord, data))
+        return -1;
+
+    return 0;
+}
+
+
+
+
 int octreeCoordAddress(const struct Octree* const octree,
                        const float coord[3],
                        size_t maxDepth,
@@ -327,10 +483,10 @@ int octreeCoordAddress(const struct Octree* const octree,
 
 
 // NOTE: result must be at least depth in length
-void octreeNeighborAddress(unsigned char direction,
+int octreeNeighborAddress(unsigned char direction,
                            size_t depth,
-                           unsigned char result[],
-                           const unsigned char address[])
+                           const unsigned char address[],
+                           unsigned char result[])
 {
     // Copy address to the result address.
     memcpy(result, address, depth*sizeof(unsigned char));
@@ -428,6 +584,11 @@ void octreeNeighborAddress(unsigned char direction,
         direction = newDirection;
         --idx;
     }
+
+    if (direction != 0)
+        return -1;
+
+    return 0;
 }
 
 
@@ -509,7 +670,7 @@ void octreeAddressLookup(const struct Octree* const octree,
 
             return;
 
-        // Addvance to next depth.
+        // Advance to next depth.
         } else {
             node = node->children[address[idx]];
         }
@@ -550,6 +711,7 @@ struct OctreeNode* _octreeNodeNewLeaf(const float center[3],
 
 
 
+static
 struct OctreeNode* _octreeNodeNewInterior(const float center[3],
                                           const float halfSize[3])
 {
@@ -572,6 +734,7 @@ struct OctreeNode* _octreeNodeNewInterior(const float center[3],
 
 
 
+static
 void _octreeNodeDelete(struct OctreeNode* node)
 {
     // Check to see if node is NULL.
@@ -837,6 +1000,100 @@ void _octreeNodeAABB(struct OctreeNode* const node,
                 _octreeNodeAABB(child, lower, upper, results);
         }
     }
+}
+
+
+
+
+static
+void _closestPoint(const float point[3],
+                   const struct DList* const coordList,
+                   const struct DList* const dataList,
+                   float* distance,
+                   float coord[3], void** data)
+{
+    // Pull out head node of the lists
+    struct DListNode* coordNode = dlistHead((struct DList*)coordList);
+    struct DListNode* dataNode = dlistHead((struct DList*)dataList);
+
+    if (coordNode == NULL)
+
+    // Loop through each node.
+    while (coordNode != NULL && dataNode != NULL) {
+
+        // Check if this node is closer to the point than distance.
+        float tmpDistance = glmDistance3f(point, dlistNodeData(coordNode));
+        if (tmpDistance < *distance) {
+
+            // Update distance.
+            *distance = tmpDistance;
+
+            // Store coordinate.
+            if (coord != NULL)
+                memcpy(coord, dlistNodeData(coordNode), 3*sizeof(float));
+
+            // Store data.
+            if (data != NULL)
+                *data = dlistNodeData(dataNode);
+        }
+
+        // Move to next node.
+        coordNode = dlistNodeNext(coordNode);
+        dataNode = dlistNodeNext(dataNode);
+    }
+}
+
+
+
+
+static
+int _octreeClosestPoint(const struct Octree* const octree,
+                        const float point[3],
+                        float coord[3],
+                        void** data)
+{
+    // Get data points at address.
+    struct DList* coordList = dlistNew();
+    struct DList* dataList = dlistNew();
+    _octreeNodeGetAll(octree->root, coordList, dataList);
+
+    // Find closest point.
+    float distance = INFINITY;
+    _closestPoint(point, coordList, dataList, &distance, coord, data);
+
+    // Delete the lists.
+    dlistDelete(coordList);
+    dlistDelete(dataList);
+
+    if (!isfinite(distance))
+        return -1;
+
+    return 0;
+}
+
+
+
+
+static
+void _octreeClosestPointInAddress(const struct Octree* const octree,
+                                  const float point[3],
+                                  size_t addressDepth,
+                                  const unsigned char address[],
+                                  float* distance,
+                                  float coord[3],
+                                  void** data)
+{
+    // Get data points at address.
+    struct DList* coordList = dlistNew();
+    struct DList* dataList = dlistNew();
+    octreeAddressLookup(octree, addressDepth, address, coordList, dataList);
+
+    // Find closest point.
+    _closestPoint(point, coordList, dataList, distance, coord, data);
+
+    // Delete the lists.
+    dlistDelete(coordList);
+    dlistDelete(dataList);
 }
 
 
