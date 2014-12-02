@@ -1,6 +1,7 @@
 #include <sciurus/sciurus.h>
 #include <sciurus/window.h>
 #include <sciurus/keyboard.h>
+#include <sciurus/shaderprogram.h>
 using namespace sc;
 #include <cstdlib>
 #include <cstdio>
@@ -203,6 +204,9 @@ static inline void initGL()
 
 static inline void initscene()
 {
+    ShaderProgram* program =
+        new ShaderProgram("media/shaders/toon.vert", "media/shaders/toon.frag");
+    program->makeCurrent();
     tilttable->t = glm::translate(tilttable->t, vec3(0.f, 50.f, 0.f));
     light->data = light;
     light->t = glm::translate(mat4(1.f), vec3(40.f, 0.f, 0.f));

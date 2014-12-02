@@ -55,6 +55,6 @@ ShaderProgram::~ShaderProgram()
 
 void ShaderProgram::makeCurrent()
 {
-    
+    glUseProgram(id);
 }
 
