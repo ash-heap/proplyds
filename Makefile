@@ -7,17 +7,22 @@ OBJDIR=$(SRCDIR)
 #  add a variable listing its objects (see OMAIN, MAIN_OBJECTS)
 #  copy the $(BINDIR)/main target, replacing main with your output, and its
 #    prereqs with your variable listing objects.
-#NOTE: -std=c++11 is no longer a prerequisite, but we can reintroduce it
-#    as soon as it is needed.
-BINS=main treedemo
+BINS=main treedemo proplyds
 
-OMAIN=main.o gl1util.o scenenode.o heightmap.o sciurus/sciurus.o sciurus/window.o sciurus/keyboard.o sciurus/shaderprogram.o sciurus/shader.o
+OMAIN=main.o gl1util.o scenenode.o heightmap.o sciurus/sciurus.o \
+        sciurus/window.o sciurus/keyboard.o sciurus/shaderprogram.o \
+        sciurus/shader.o
 MAIN_OBJECTS=$(OMAIN:%=$(OBJDIR)/%)
 
 OTREEDEMO=treedemo.o gl1util.o scenenode.o heightmap.o sciurus/sciurus.o \
           sciurus/window.o sciurus/keyboard.o sciurus/glm.o sciurus/dlist.o \
           sciurus/octree.o
 TREEDEMO_OBJECTS=$(OTREEDEMO:%=$(OBJDIR)/%)
+
+OPROPLYDS=proplyds.o gl1util.o scenenode.o heightmap.o sciurus/sciurus.o \
+        sciurus/window.o sciurus/keyboard.o sciurus/shaderprogram.o \
+        sciurus/shader.o
+PROPLYDS_OBJECTS=$(OPROPLYDS:%=$(OBJDIR)/%)
 
 OUTPUTS=$(BINS:%=$(BINDIR)/%)
 
@@ -38,10 +43,10 @@ BUILDPARAM=$(STANDARDS) $(BUILDTYPE)
 
 CFLAGS=$(BUILDPARAM) $(INCLUDES)
 LDFLAGS=$(BUILDPARAM) $(LIBS)
-# BFLAGS is used when doing compilation and linking in a single step
+#BFLAGS is used when doing compilation and linking in a single step
 BFLAGS=$(BUILDPARAM) $(INCLUDES) $(LIBS)
 
-all: $(OUTPUTS) main treedemo
+all: $(OUTPUTS) main treedemo proplyds
 
 bin:
 	@echo -e '\e[33mCREATING DIRECTORY \e[96m$@\e[m'
@@ -56,6 +61,10 @@ $(BINDIR)/main: $(MAIN_OBJECTS) | bin
 	$(CXX) $^ $(LDFLAGS) -o $@
 
 $(BINDIR)/treedemo: $(TREEDEMO_OBJECTS) | bin
+	@echo -e '\e[33mLINKING \e[96m$@\e[m \e[33mFROM \e[94m$^\e[m'
+	$(CXX) $^ $(LDFLAGS) -o $@
+
+$(BINDIR)/proplyds: $(PROPLYDS_OBJECTS) | bin
 	@echo -e '\e[33mLINKING \e[96m$@\e[m \e[33mFROM \e[94m$^\e[m'
 	$(CXX) $^ $(LDFLAGS) -o $@
 	
@@ -79,10 +88,10 @@ win3pdeps.zip: bin32 bin64 3p
 
 clean:
 	@echo -e '\e[33mCLEANING...\e[m'
-	rm -f -v *~ $(MAIN_OBJECTS) $(TREEDEMO_OBJECTS)
+	rm -f -v *~ $(MAIN_OBJECTS) $(TREEDEMO_OBJECTS) $(PROPLYDS_OBJECTS)
 
 clobber: clean
-	rm -f -v *~ $(OUTPUTS) main media.zip win3pdeps.zip
+	rm -f -v *~ $(OUTPUTS) main treedemo proplyds media.zip win3pdeps.zip
 
 clean-windows:
 	@echo -e '\e[33mCLEANING \e[96mproplyds*\e[m \e[33mFROM \e[94mbin32\e[m'
