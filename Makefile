@@ -9,10 +9,15 @@ OBJDIR=$(SRCDIR)
 #    prereqs with your variable listing objects.
 #NOTE: -std=c++11 is no longer a prerequisite, but we can reintroduce it
 #    as soon as it is needed.
-BINS=main
+BINS=main treedemo
 
 OMAIN=main.o gl1util.o scenenode.o heightmap.o sciurus/sciurus.o sciurus/window.o sciurus/keyboard.o sciurus/shaderprogram.o sciurus/shader.o
 MAIN_OBJECTS=$(OMAIN:%=$(OBJDIR)/%)
+
+OTREEDEMO=treedemo.o gl1util.o scenenode.o heightmap.o sciurus/sciurus.o \
+          sciurus/window.o sciurus/keyboard.o sciurus/glm.o sciurus/dlist.o \
+          sciurus/octree.o
+TREEDEMO_OBJECTS=$(OTREEDEMO:%=$(OBJDIR)/%)
 
 OUTPUTS=$(BINS:%=$(BINDIR)/%)
 
@@ -36,7 +41,7 @@ LDFLAGS=$(BUILDPARAM) $(LIBS)
 # BFLAGS is used when doing compilation and linking in a single step
 BFLAGS=$(BUILDPARAM) $(INCLUDES) $(LIBS)
 
-all: $(OUTPUTS) main
+all: $(OUTPUTS) main treedemo
 
 bin:
 	@echo -e '\e[33mCREATING DIRECTORY \e[96m$@\e[m'
@@ -49,10 +54,18 @@ bin:
 $(BINDIR)/main: $(MAIN_OBJECTS) | bin
 	@echo -e '\e[33mLINKING \e[96m$@\e[m \e[33mFROM \e[94m$^\e[m'
 	$(CXX) $^ $(LDFLAGS) -o $@
+
+$(BINDIR)/treedemo: $(TREEDEMO_OBJECTS) | bin
+	@echo -e '\e[33mLINKING \e[96m$@\e[m \e[33mFROM \e[94m$^\e[m'
+	$(CXX) $^ $(LDFLAGS) -o $@
 	
 $(OBJDIR)/%.o:$(SRCDIR)/%.cpp
 	@echo -e '\e[33mCOMPILING \e[96m$@\e[m \e[33mFROM \e[94m$^\e[m'
 	$(CXX) $(CFLAGS) -c $< -o $@
+
+$(OBJDIR)/%.o:$(SRCDIR)/%.c
+	@echo -e '\e[33mCOMPILING \e[96m$@\e[m \e[33mFROM \e[94m$^\e[m'
+	gcc -Wall -Wextra -pedantic -std=c11 -c $< -o $@
 
 packs: media.zip win3pdeps.zip
 
@@ -66,7 +79,7 @@ win3pdeps.zip: bin32 bin64 3p
 
 clean:
 	@echo -e '\e[33mCLEANING...\e[m'
-	rm -f -v *~ $(MAIN_OBJECTS)
+	rm -f -v *~ $(MAIN_OBJECTS) $(TREEDEMO_OBJECTS)
 
 clobber: clean
 	rm -f -v *~ $(OUTPUTS) main media.zip win3pdeps.zip
