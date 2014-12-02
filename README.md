@@ -23,3 +23,15 @@ Windows
 
 NOTE: 64-bit systems may fail to run the 32-bit version because of missing 32-bit .dlls (in this case, the operating system will attempt to load the 64-bit .dlls, and the game will crash at startup).
 
+
+MILES: STILL TODO
+-----------------
+
+- terrain should be made more interesting, less monotonous
+- camera should move across terrain
+- get shaders actually working
+- texture blending?
+- in-shader terrain generation?
+- oceans
+- buildings
+
